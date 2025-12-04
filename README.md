@@ -1,73 +1,99 @@
-✅ 1. README.md PRO (version complète, prête à coller)
-Empreinte Verif
-
-Plateforme de vérification d’empreinte digitale – Flutter + Web + API
-
-
-
-
-
-
+✅ README.md — VERSION ENTERPRISE + MILITARY PRO (à coller dans la racine du projet)
+🛡️ SANAD IDARI — EMPREINTE VERIF
+Plateforme de vérification d’identité — Flutter Web • CI/CD GitHub • Vercel • Agents GPT PRO
 📌 1. Description
 
-Empreinte Verif est une application Flutter permettant de :
+Empreinte Verif est une plateforme moderne permettant :
 
-Scanner une empreinte digitale
+🔍 Scan d’empreinte digitale (Android natif + Web)
 
-Vérifier une identité via une API (en développement)
+🔐 Vérification d’identité via API sécurisée
 
-Fonctionner sur mobile (Android) et en Web (Vercel)
+🌐 Déploiement automatique sur Vercel
 
-Être simple à déployer et maintenir
+🛡️ Documentation militaire pour travail collaboratif multi-agents GPT
 
-Projet conçu pour une architecture évolutive, sécurisée et documentée pour plusieurs agents.
+🏗️ Architecture stable, scalable, et maintenable
+
+Ce projet est développé dans une approche ENTERPRISE avec :
+
+✔ CI/CD GitHub Actions
+✔ Repo privé + miroir public (pour lecture agent GPT)
+✔ Documentation PRO strictement contrôlée
+✔ Architecture prête pour les futures fonctionnalités Backend & Mobile
 
 🚀 2. Fonctionnalités
 ✔ Déjà Implémenté
 
-UI “Scanner l’empreinte”
+UI complète “Scanner l’empreinte”
 
-Déploiement Web complet (Vercel)
+Routing Web corrigé (aucune 404 interne)
 
-Correction des routes, base-href, vercel.json
+Déploiement Vercel stable
 
-Fonts optimisées (Google Fonts Cairo)
+Fichier vercel.json optimisé pour Flutter Web SPA
 
-Routing Web 0 bug
+Fonts & assets optimisés
 
-🔄 Bientôt
+CI/CD GitHub → Vercel fonctionnel
 
-Backend API /scan
+Système miroir GitHub automatique (public → agents GPT)
+
+🔄 En Développement
+
+API Backend /scan
+
+Gestion des empreintes (hash crypté)
+
+Analyse biométrique
+
+Token sécurisé d’authentification
+
+🟦 À venir
 
 Scan biométrique Android natif
 
+Dashboard administrateur
+
 Base de données cloud
 
-Panel d’administration
+Version mobile stable
 
-🧱 3. Architecture globale
+Système de logs & monitoring
+
+🧱 3. Architecture Globale
 emp_verif/
- ├─ lib/
+ ├─ lib/                 # Code Flutter
  │   ├─ main.dart
  │   ├─ ui/
- │   │   └─ home.dart
- ├─ web/
+ │   └─ widgets/
+ │
+ ├─ web/                 # Entrée Flutter Web
  │   ├─ index.html
  │   ├─ flutter_bootstrap.js
  │   ├─ manifest.json
- ├─ build/web/
- ├─ vercel.json
- └─ docs/
-     ├─ architecture.png
-     ├─ guide_agents.md
-     └─ project_status.md
+ │   ├─ icons/
+ │   └─ assets/
+ │
+ ├─ build/web/           # Build généré automatiquement (ne jamais modifier)
+ │
+ ├─ docs/                # Documentation militaire utilisée par les agents GPT
+ │
+ ├─ .github/workflows/   # CI/CD (+ miroir)
+ │   ├─ build_web.yml
+ │   └─ mirror.yml
+ │
+ ├─ vercel.json          # Configuration SPA pour Flutter Web
+ ├─ pubspec.yaml
+ └─ README.md             # Ce fichier
 
-🌐 4. Déploiement Web
+🌐 4. Déploiement Web — Vercel
 
-Ce projet est configuré pour Vercel.
+Ce projet utilise un pipeline CI/CD professionnel :
 
-📄 vercel.json :
+github push → build_web.yml → flutter build web → vercel deploy
 
+📄 vercel.json (SPA obligatoire)
 {
   "version": 2,
   "routes": [
@@ -83,8 +109,57 @@ Ce projet est configuré pour Vercel.
   ]
 }
 
-⚙️ 5. Installation & Setup
-Local :
+🌍 Domaine final :
+https://qrpruf.sanadidari.com
+
+🔁 5. CI/CD — Pipelines GitHub
+build_web.yml
+
+Installe Flutter
+
+Build Web en mode release
+
+Déploie automatiquement sur Vercel
+
+Contrôlé via VERCEL_TOKEN
+
+mirror.yml
+
+Utilise clé SSH MIRROR_DEPLOY_KEY
+
+Force push vers repo public :
+sanadidari/empreinte_verif_mirror
+
+Permet aux agents GPT de lire la doc + code source
+
+🤖 6. Agents GPT — Protocole Militaire
+
+Le projet utilise un système Protocole Militaire GPT permettant :
+
+Travail multi-agents sans erreur
+
+Séquence d’actions strictes
+
+Validation utilisateur obligatoire
+
+Zéro improvisation
+
+Lecture automatique GitHub dès le premier message
+
+📌 Les agents doivent lire obligatoirement :
+
+/docs/AGENT_PROTOCOL.md
+
+/docs/STARTUP_CHECKLIST.md
+
+/docs/CHECKLIST_MASTER.md
+
+/docs/NEXT_ACTION.md
+
+Ils doivent produire un rapport initial obligatoire avant tout travail.
+
+⚙️ 7. Installation & Setup Local
+Lancer le projet :
 flutter pub get
 flutter run
 
@@ -96,28 +171,67 @@ git add .
 git commit -m "deploy"
 git push
 
-📌 6. Roadmap
+🧭 8. Roadmap du Projet
+Phase 1 — Déploiement Web
 
- API backend (Dart ou Node)
+✔ Terminé
 
- Base de données biométrique
+Phase 2 — Backend
 
- Tests mobiles
+API /scan
 
- Dashboard administrateur
+Analyse biométrique
 
-👥 7. Contributions
+Phase 3 — Mobile
 
-Les nouveaux agents doivent lire :
+Scan empreinte Android
 
-docs/project_status.md
+Permissions & sécurité
 
-docs/guide_agents.md
+Phase 4 — Admin Panel
 
-docs/architecture.png
+Gestion utilisateurs
 
-🧑‍💻 8. Auteur
+Dashboard sécurité
 
+<<<<<<< HEAD
 Projet initié par Sanad Idari.
 ---------
    mirror #1
+=======
+Phase 5 — Optimisations
+
+SEO Flutter Web
+
+Compression assets
+
+CI/CD avancé
+
+Logs & monitoring
+
+👥 9. Contributions
+
+Les nouveaux développeurs doivent lire :
+
+/docs/AGENT_PROTOCOL.md
+
+/docs/STARTUP_CHECKLIST.md
+
+/docs/CHECKLIST_MASTER.md
+
+/docs/ARCHITECTURE.md
+
+/docs/TASKS.md
+
+📌 Toutes les contributions passent par CI/CD + review stricte.
+
+🧑‍💻 10. Auteur
+
+Projet conçu et dirigé par :
+Sanad Idari
+
+Architecture soutenue par :
+Système GPT Militaire PRO
+
+🟦 FIN DU README PRO ENTERPRISE
+>>>>>>> dfc0698 (Add military documentation system + updated README)
