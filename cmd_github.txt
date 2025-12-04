@@ -1,0 +1,42 @@
+🔥 2) Les commandes officielles pour publier (push)
+
+Tu peux les exécuter dans ton terminal, dans le dossier :
+
+C:\samir_flutter\empreinte_verif
+
+
+Voici les commandes PRO (à garder pour toujours) :
+
+➤ A. Vérifier les fichiers modifiés
+git status
+
+➤ B. Ajouter toutes les modifications
+git add .
+
+➤ C. Créer un message de commit
+
+Tu peux mettre ce que tu veux dans le commentaire :
+
+git commit -m "update: corrections + mise à jour"
+
+➤ D. Envoyer vers GitHub
+git push origin main
+
+Après ça :
+
+🔥 Vercel déploie automatiquement et ton site se met à jour.
+
+💡 Résumé :
+
+Tu modifies ton code →
+Tu fais :
+
+git add .
+git commit -m "update"
+git push origin main
+
+
+→ GitHub → Vercel → Déploiement automatique →
+→ Ton site : https://qrpruf.sanadidari.com
+
+→ Se met à jour en 10–20 secondes.
