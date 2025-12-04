@@ -1,0 +1,29 @@
+name: Mirror to Public Repo
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.MIRROR_DEPLOY_KEY }}
+          known_hosts: "|1|aW50ZXJuYWwtbXJyLWhvc3QgZm9yY2UgYWNB"
+
+      - name: Add mirror remote
+        run: |
+          git remote add mirror git@github.com:sanadidari/empreinte_verif_mirror.git
+
+      - name: Push to mirror
+        run: |
+          git push --force mirror main
