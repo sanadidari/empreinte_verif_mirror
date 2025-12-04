@@ -1,15 +1,35 @@
 {
   "version": 2,
-  "public": true,
   "routes": [
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/icons/(.*)", "dest": "/icons/$1" },
-    { "src": "/canvaskit/(.*)", "dest": "/canvaskit/$1" },
+    
+    {
+      "src": "/main.dart.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/main.dart.js"
+    },
+    {
+      "src": "/flutter.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/flutter.js"
+    },
+    {
+      "src": "/flutter_bootstrap.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/flutter_bootstrap.js"
+    },
+    {
+      "src": "/flutter_service_worker.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/flutter_service_worker.js"
+    },
 
-    { "src": "/flutter.js", "dest": "/flutter.js" },
-    { "src": "/flutter_bootstrap.js", "dest": "/flutter_bootstrap.js" },
-    { "src": "/main.dart.js", "dest": "/main.dart.js" },
-    { "src": "/flutter_service_worker.js", "dest": "/flutter_service_worker.js" },
+    {
+      "src": "/install.html",
+      "headers": { "Content-Type": "text/html; charset=utf-8" },
+      "dest": "/install.html"
+    },
 
     { "src": "/manifest.json", "dest": "/manifest.json" },
     { "src": "/version.json", "dest": "/version.json" },
