@@ -1,128 +1,169 @@
-# STATE_PROJECT.md — État Global du Projet (PRO MODE)
+📄 STATE_PROJECT.md — Version PRO
+🟦 État du Projet — Sanad Idari — empreinte_verif
 
----
+Dernière mise à jour : (à remplir par l’agent ou l’utilisateur après chaque action)
+Source de vérité : /docs + branche main du repo.
 
-## 🔷 Stack Technique Actuelle
-- **Framework :** Flutter Web  
-- **Hébergement :** Vercel (CDN + SSL + Edge Network)  
-- **Pipeline CI/CD :** GitHub Actions → Vercel  
-- **Branche active :** main  
-- **Domaine principal :** https://qrpruf.sanadidari.com  
-- **Domaine secondaire :** https://www.qrpruf.sanadidari.com (redirigé)
+1. 🔷 Aperçu général du projet
 
----
+Le projet Sanad Idari — empreinte_verif est une application Flutter Web, hébergée sur Vercel, utilisant un pipeline :
 
-## 🔷 Structure du Déploiement
-### **🟦 1. GitHub Actions**
-Workflow : `.github/workflows/build_web.yml`  
-Fonctions principales :
-- Installation Flutter
-- Build Flutter Web (`flutter build web --release`)
-- Déploiement automatique via :
-  ```
-  vercel deploy --prod --yes --token=$VERCEL_TOKEN
-  ```
-- Déclenché sur chaque `push` → `main`
+GitHub (branche main) → Vercel Build → Déploiement Web
 
-### **🟦 2. Vercel**
-- Build réceptionné depuis GitHub Actions  
-- Serving automatique du dossier `build/web`  
-- Gestion automatique TLS / SSL  
-- Edge Network activé  
-- Redirection universelle → `index.html`
 
----
+L’objectif actuel : fournir une interface stable permettant la vérification administrative (QR/empreinte).
 
-## 🔷 Fichier vercel.json (version actuelle)
-```json
-{
-  "version": 2,
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
-}
-```
-### 🎯 Rôle :
-- Garantir un comportement Single Page App (SPA)
-- Éviter les erreurs 404 sur navigation interne Flutter Web
+2. 🔷 Stack technique
+✔ Framework
 
----
+Flutter Web
 
-## 🔷 Migration HostPapa → Vercel (État Final)
-- Hébergement HostPapa abandonné (sauf gestion DNS)  
-- Suppression de :
-  - Scripts PowerShell (deploy.ps1)  
-  - Watchdog Windows  
-  - Systèmes de sync manuelle  
-- DNS configuré sur HostPapa :
-  ```
-  qrpruf.sanadidari.com → CNAME → 9a0a2fdeff44fe9e.vercel-dns-017.com
-  www.qrpruf.sanadidari.com → CNAME → qrpruf.sanadidari.com
-  ```
-- Propagation DNS mondiale :
-  ✔ Vérifiée (dnschecker)  
-  ✔ Compatible Vercel  
-  ✔ Prêt pour le SSL  
+Dart
 
----
+✔ Hébergement
 
-## 🔷 Vérifications Techniques CI/CD
-- `build_web.yml` → validé  
-- `vercel.json` → validé  
-- `web/index.html` → trouvé  
-- `pubspec.yaml` → SDK OK (`>=3.0.0 <4.0.0`)  
-- Déploiement GitHub Actions → fonctionne  
-- Domaine attaché à Vercel → OK  
-- Certificat SSL → en cours / auto-génération  
+Vercel
 
----
+Domaine prévu :
+https://qrpruf.sanadidari.com
 
-## 🔷 Points de Vigilance (à surveiller)
-- Refresh DNS dans Vercel si changement  
-- Tester navigation interne Flutter après chaque build  
-- Surveiller logs GitHub Actions lors des builds lourds  
-- Surveiller certificats SSL après propagation DNS  
+✔ Pipeline
 
----
+GitHub → Vercel (branche main)
 
-## 🔷 TODO — Prochaines Étapes (PRO MODE)
-- Finaliser le SSL pour `qrpruf.sanadidari.com`  
-- Tester le site Flutter en production (render final)  
-- Mettre à jour :
-  - `HISTORY.md` (migration complète)  
-  - `TASKS.md` (déploiement terminé)  
-- Générer un README PRO  
-- Ajouter éventuellement :
-  - Préproduction (Vercel Preview)
-  - Monitoring/Logs
-  - SEO Flutter Web
-  - Amélioration de la performance CI/CD (cache Flutter)
+3. 🔷 Structure du dépôt GitHub (attendue)
 
----
+pubspec.yaml
 
-## 🔷 État GitHub
-- **Repo :** sanadidari/empreinte_verif  
-- **Branche active :** main  
-- **Dernière synchro :** 2025-12-06  
-- **Statut :** stable, propre et synchronisé  
-- **CI/CD :** opérationnel et automatique  
-- **Documentation :** complète dans `/docs/`
+lib/ (code Flutter)
 
----
+web/ (index.html, assets)
 
-## 🔷 Résumé Global (PRO MODE)
-Le projet est désormais :
+docs/ (documentation agent)
 
-- 🟢 **Migré avec succès vers Vercel**  
-- 🟢 **Déployé automatiquement via GitHub Actions**  
-- 🟢 **Documenté à un niveau professionnel**  
-- 🟢 **Servi via un domaine personnalisé (qrpruf.sanadidari.com)**  
-- 🟢 **Dépendances Flutter propres et stables**  
+vercel.json (optionnel selon stratégie)
 
-Il reste uniquement des tâches de finition :  
-→ monitoring, SEO, tests finaux et amélioration continue.
+L’agent doit vérifier l’existence de ces éléments lors du démarrage.
 
----
+4. 🔷 Vercel — Configuration attendue
+Build Command :
+flutter build web --release
 
-## 📌 Mise à jour du : 2025-12-06  
-Documentation et état revus par Agent GPT (PRO MODE).  
+Output Directory :
+build/web
+
+Framework :
+Other
+
+DNS :
+
+qrpruf.sanadidari.com → CNAME vers Vercel
+
+5. 🔷 Historique migration
+
+Hébergement HostPapa supprimé
+
+Watchdog supprimé
+
+Scripts PowerShell supprimés
+
+Pipeline Flutter Web → Vercel initié
+
+Système PRO agents GPT activé
+
+Documentation /docs normalisée
+
+6. 🔷 Points de vigilance (risques potentiels)
+
+Page blanche Flutter Web en cas de mauvaise configuration Vercel
+
+Routing SPA → nécessite routes dans vercel.json
+
+Flutter Web parfois lent à charger : vérifier assets compression
+
+Logs Vercel à surveiller après premier déploiement
+
+7. 🔷 État GitHub
+
+Repo : sanadidari/empreinte_verif
+
+Branche active : main
+
+Dernière vérification : (à remplir)
+
+État général du repo : OK
+
+Accès GitHub : fonctionnel (le repo doit être public ou RAW accessible)
+
+8. 🔷 STATE_CODE — État du code Flutter
+
+Ce bloc doit être mis à jour par l’agent après chaque lecture du repo.
+
+pubspec.yaml → OK
+
+lib/ → présent
+
+web/ → présent
+
+Compatibilité Flutter Web → OK
+
+Script build → fonctionnel
+
+Aucun problème critique détecté
+
+9. 🔷 STATE_INFRA — État de l’infrastructure
+
+Vercel → prêt pour import
+
+Domaine → prêt
+
+DNS → OK
+
+Pipeline GitHub → OK
+
+10. 🔷 STATE_DOCS — État documentation
+
+Tous les fichiers /docs présents
+
+Version PRO → activée
+
+Règle d’Or → active
+
+Agents → fonctionnent avec PRO MODE strict
+
+11. 🔷 Résumé des tâches
+✔ Terminées
+
+Migration HostPapa → Vercel
+
+Suppression scripts & watchdog
+
+Mise en place /docs
+
+Système PRO agents GPT
+
+Vérification GitHub
+
+🔄 En cours
+
+Configuration du déploiement Flutter Web sur Vercel
+
+🟩 À faire
+
+Import repo dans Vercel
+
+Framework : Other
+
+Build command : flutter build web --release
+
+Output : build/web
+
+Premier déploiement
+
+Mise à jour STATE_PROJECT.md + TASKS.md
+
+⛔ Bloquées
+
+Aucune
+
+✔ FIN DU FICHIER

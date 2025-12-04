@@ -1,172 +1,123 @@
-# ARCHITECTURE.md — Architecture Complète du Projet (PRO MODE)
+📄 ARCHITECTURE.md — Version PRO
+🏗️ Architecture — Sanad Idari — empreinte_verif
 
----
+Voici l’architecture officielle du projet, conforme à la stack Flutter Web et au pipeline Vercel.
 
-# 🔷 📌 Vue d’Ensemble
+1. 🔷 Vue d’ensemble
 
-Le projet **Empreinte Vérif** utilise Flutter Web comme front-end,  
-et s’appuie sur une architecture moderne :
+Le projet Sanad Idari — empreinte_verif suit l’architecture suivante :
 
-```
-Flutter Web  →  GitHub (main)  →  GitHub Actions CI/CD  →  Vercel Hosting  
-DNS via HostPapa  →  CNAME vers Vercel Edge Network  
-Domaine public : https://qrpruf.sanadidari.com
-```
+Flutter Web → GitHub → Vercel Build → Vercel Hosting → Domaine final
 
-Cette architecture permet :
 
-- Déploiement automatique  
-- CDN Edge ultra rapide  
-- SSL automatique  
-- Routing SPA correct pour Flutter Web  
-- Documentation complète dans `/docs`
+L’application est une Single Page Application (SPA) compilée par Flutter Web.
 
----
+2. 🔷 Pipeline complet (schéma)
+        ┌───────────────────┐
+        │    Développeur    │
+        └─────────┬─────────┘
+                  │ git push main
+                  ▼
+        ┌───────────────────┐
+        │      GitHub       │
+        └─────────┬─────────┘
+                  │ Fetch & Build
+                  ▼
+        ┌────────────────────────────────┐
+        │             Vercel             │
+        │  - Framework: Other            │
+        │  - Build: flutter build web   │
+        │  - Output: build/web          │
+        └─────────┬──────────────────────┘
+                  │ Serveur CDN global
+                  ▼
+        ┌───────────────────┐
+        │   Utilisateurs    │
+        └───────────────────┘
 
-# 🔷 🏗️ Architecture Technique Détaillée
+3. 🔷 Structure du dépôt GitHub
+/
+├── lib/                    # Code Flutter (widgets, pages, provider…)
+├── web/                    # index.html + favicon + icons
+├── build/                  # Généré après build
+│     └── web/              # Output final pour Vercel
+├── docs/                   # Documentation PRO des agents GPT
+├── pubspec.yaml            # Dépendances Flutter
+└── vercel.json (optionnel)
 
-## 1. ➤ **Application Flutter Web**
-- Code source dans `lib/`
-- Dossier web officiel dans `web/`
-- Build généré automatiquement :  
-  → `build/web/`
+4. 🔷 Détails du Build Flutter Web
+Build command :
+flutter build web --release
 
-### ⚠️ Règle Flutter Web  
-Le routing **doit obligatoirement** passer par :  
-→ `/index.html`
+Output :
+build/web
 
-Grâce au fichier `vercel.json`.
+Caractéristiques Flutter Web :
 
----
+Génère une SPA avec index.html unique
 
-## 2. ➤ **Pipeline CI/CD — GitHub Actions**
-Workflow :  
-`.github/workflows/build_web.yml`
+Utilise main.dart.js (minifié)
 
-### Fonctionnement :
-1. Checkout du code  
-2. Installation de Flutter  
-3. `flutter clean && flutter pub get`  
-4. Build Web :  
-   ```
-   flutter build web --release
-   ```
-5. Installation CLI Vercel  
-6. Déploiement automatique :  
-   ```
-   vercel deploy --prod --token=$VERCEL_TOKEN --scope=sanad-idari build/web
-   ```
+Assets dans /assets/
 
-### Rôle du pipeline :
-- Automatiser entièrement la production  
-- Garantir un build propre  
-- Éviter toute manipulation manuelle
+DOIT avoir un fallback routing vers /index.html
 
----
+5. 🔷 Configuration Vercel
+Framework :
+Other
 
-## 3. ➤ **Vercel — Hébergement & Edge Network**
+Build command :
+flutter build web --release
 
-### Vercel gère automatiquement :
-- CDN global  
-- SSL Let's Encrypt  
-- Redirections  
-- Previews (si activés)  
-- Routing SPA via `vercel.json` :
+Output :
+build/web
 
-```json
+Routing SPA :
+
+(Nécessaire si vercel.json est utilisé)
+
 {
-  "version": 2,
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
-```
 
-### Projet Vercel utilisé :
-- **empreinte-verif** (production)
+6. 🔷 Infrastructure DNS
 
----
+Domaine final :
 
-## 4. ➤ **DNS — HostPapa (gestion uniquement)**
+qrpruf.sanadidari.com
 
-HostPapa n’héberge plus le site.  
-Il sert UNIQUEMENT à stocker les DNS.
 
-### DNS officiels :
+Configuration DNS :
 
-```
-qrpruf.sanadidari.com → CNAME → 9a0a2fdeff44fe9e.vercel-dns-017.com
-www.qrpruf.sanadidari.com → CNAME → qrpruf.sanadidari.com
-```
+Type : CNAME
+Host : qrpruf
+Value : cname.vercel-dns.com
+TTL  : automatique
 
-### Pourquoi ce CNAME ?
-- C’est le CNAME recommandé par Vercel  
-- Il active le SSL  
-- Il relie automatiquement Vercel ↔ domaine
+7. 🔷 Contraintes Flutter Web (Notes techniques)
 
----
+Le chargement initial peut être lent → activer compression GZIP/Brotli de Vercel
 
-# 🔷 🗺️ Schéma d’Architecture (ASCII)
+Le routing doit absolument pointer vers /index.html
 
-```
-                   ┌─────────────────────────────────┐
-                   │         HostPapa DNS            │
-                   │  CNAME qrpruf → vercel-dns      │
-                   └───────────────┬─────────────────┘
-                                   │
-                                   ▼
-                     ┌──────────────────────────┐
-                     │        Vercel            │
-                     │   - SSL (Let's Encrypt)  │
-                     │   - CDN Edge Network     │
-                     │   - Routing SPA          │
-                     │   - Production Hosting   │
-                     └─────────────┬────────────┘
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │   GitHub Actions CI/CD     │
-                    │  flutter build web         │
-                    │  vercel deploy --prod      │
-                    └──────────────┬─────────────┘
-                                   │
-                                   ▼
-                     ┌──────────────────────────┐
-                     │     Flutter Web App      │
-                     │      build/web/          │
-                     │  index.html (root)       │
-                     └──────────────────────────┘
-```
+Les assets doivent exister dans le chemin /assets/
 
----
+Si web/index.html est modifié, refaire un build complet
 
-# 🔷 🔒 Points Critiques de l’Architecture
+Le SEO Flutter Web est limité par nature (à documenter plus tard)
 
-## 1. Vercel gère TOUT le hosting  
-HostPapa ne sert plus → juste DNS.
+8. 🔷 Risques et Points de vigilance
 
-## 2. CI/CD obligatoire  
-Aucun déploiement manuel n'est autorisé.
+Page blanche si index.html n’est pas trouvé
 
-## 3. `vercel.json` est indispensable  
-Sinon Flutter Web produit des erreurs 404.
+Erreur Vercel si build ne trouve pas Flutter SDK
 
-## 4. Le domaine doit rester sur  
-`*.vercel-dns-017.com`  
-pas les anciennes versions.
+Problème routing si vercel.json absent
 
-## 5. Les docs doivent rester synchronisées  
-→ `/docs` est la source de vérité.
+Build cassé si pubspec.yaml contient erreurs
 
----
+404 si assets mal générés après build
 
-# 🔷 🔧 Améliorations possibles
-- Ajouter une branche **staging** → preview Vercel  
-- Ajouter du cache Flutter → build plus rapide  
-- Mettre en place tests automatiques Flutter Web  
-- SEO & performance Lighthouse  
-- Monitoring Vercel (logs, trafic, erreurs)
-
----
-
-# 🟩 FIN DU DOCUMENT — ARCHITECTURE.md
+✔ FIN DU FICHIER

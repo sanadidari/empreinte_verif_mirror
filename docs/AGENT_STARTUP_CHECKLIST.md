@@ -1,109 +1,160 @@
-# AGENT_STARTUP_CHECKLIST.md — Checklist de Démarrage Agent GPT (PRO MODE)
+📄 AGENT_STARTUP_CHECKLIST.md — Version PRO
+✅ Checklist de démarrage Agents GPT
 
----
+Projet : Sanad Idari — empreinte_verif
 
-## 🔷 1. Lecture obligatoire des documents `/docs`
-L’agent doit lire AVANT TOUTE ACTION :
+Cette checklist doit être exécutée avant toute réponse technique, dans l’ordre strict ci-dessous.
 
-- `RULES.md`  
-- `AGENT_START.md`  
-- `NEXT_ACTION.md`  
-- `STATE_PROJECT.md`  
-- `TASKS.md`  
-- `HISTORY.md`  
-- `ARCHITECTURE.md`  
-- `VERCEL_DEPLOY.md`  
-- `CHECKLIST_MASTER.md`  
+1. 🔐 Vérification accès GitHub
+1.1 Tester accès au dépôt public
 
-⚠️ Aucun raisonnement ni action technique n’est autorisé avant cette lecture.
+URL :
+https://github.com/sanadidari/empreinte_verif
 
----
+Si public → continuer
 
-## 🔷 2. Vérification du dépôt GitHub
-L’agent doit :
+Si privé → passer à 1.2
 
-- Charger le dépôt :  
-  `https://github.com/sanadidari/empreinte_verif`
-- Lire la branche `main`
-- Vérifier la structure Flutter :
-  - `lib/`
-  - `web/`
-  - `pubspec.yaml`
-- Vérifier la présence et la validité du CI/CD :
-  - `.github/workflows/build_web.yml`
-  - `vercel.json`
+1.2 Tester les URLs RAW GitHub
 
----
+Exemples :
 
-## 🔷 3. Diagnostic initial obligatoire
-L’agent doit produire un diagnostic structuré :
+https://raw.githubusercontent.com/sanadidari/empreinte_verif/main/docs/AGENT_START.md
+https://raw.githubusercontent.com/sanadidari/empreinte_verif/main/docs/STATE_PROJECT.md
+https://raw.githubusercontent.com/sanadidari/empreinte_verif/main/docs/NEXT_ACTION.md
 
-### 🔹 1. Résumé du contexte  
-### 🔹 2. Résumé de l’état du projet  
-### 🔹 3. Prochaine action (tirée de `NEXT_ACTION.md`)  
-### 🔹 4. Risques éventuels (DNS, SSL, CI/CD, Flutter Web)  
+1.3 Si l'accès échoue → demander utilisateur
 
-⚠️ Le diagnostic NE doit contenir AUCUNE action non validée.
+Rendre public
 
----
+Envoyer liens RAW
 
-## 🔷 4. Validation obligatoire
-Avant toute modification ou intervention, l’agent doit demander :
+Copier/coller docs
 
-> “Souhaites-tu que j’exécute cette action ?”
+Créer repo public /docs
 
-Sans validation explicite → aucune action autorisée.
+⚠️ Ne pas continuer tant que la lecture effective n’est pas confirmée.
 
----
+2. 📚 Lecture obligatoire des fichiers /docs
 
-## 🔷 5. Exécution (PRO MODE)
-Si l’utilisateur valide :
+Lire dans cet ordre exact :
 
-- Réaliser **UNE seule action**  
-- Fournir **le fichier complet** modifié (jamais partiellement)  
-- Exécuter l'action proprement et clairement  
-- Résumer la modification en 2 lignes maximum  
+AGENT_START.md
 
----
+AGENT_STARTUP_CHECKLIST.md
 
-## 🔷 6. Mise à jour documentaire obligatoire
-Après chaque action, l’agent doit mettre à jour :
+NEXT_ACTION.md
 
-- `STATE_PROJECT.md`  
-- `TASKS.md`  
-- `HISTORY.md`  
-- `VERCEL_DEPLOY.md` (si déploiement / DNS / CI/CD impacté)  
-- `NEXT_ACTION.md` (si l’étape change)  
+STATE_PROJECT.md
 
-⚠️ Le système documentaire doit toujours refléter l’état réel du projet.
+RULES.md
 
----
+ARCHITECTURE.md
 
-## 🔷 7. Vérification d’accessibilité
-L’agent doit vérifier :
+HISTORY.md
 
-- Accessibilité GitHub  
-- Accessibilité Vercel  
-- Accessibilité du domaine :  
-  - `https://qrpruf.sanadidari.com`  
-  - `https://www.qrpruf.sanadidari.com`  
+DEPLOY_GUIDE_VERCEL.md
 
-En cas d’erreur (404, SSL, DNS), l’agent doit :  
-→ Stopper  
-→ Diagnostiquer  
-→ Proposer une action ciblée
+TASKS.md
 
----
+CHECKLIST_MASTER.md (si présent)
 
-## 🔷 8. Fin du démarrage
-Quand toutes les étapes ci-dessus sont validées :
+Pour chaque fichier :
 
-➡️ L’agent peut commencer son travail en **PRO MODE**  
-en respectant strictement :  
-- `RULES.md`  
-- `AGENT_START.md`  
-- `CHECKLIST_MASTER.md`
+Lire
 
----
+Vérifier
 
-# 🟩 FIN DU DOCUMENT — AGENT_STARTUP_CHECKLIST.md
+Noter la source (GitHub / RAW / collé)
+
+3. 🧩 Vérifications du dépôt GitHub
+
+L’agent doit confirmer :
+
+✔ 3.1 Structure Flutter
+
+pubspec.yaml présent
+
+dossier lib/ présent
+
+dossier web/ présent
+
+compatibilité Flutter Web
+
+✔ 3.2 Pipeline Vercel
+
+présence éventuelle de vercel.json
+
+état du dernier commit
+
+branche main active
+
+✔ 3.3 Santé du code
+
+Aucune erreur manifeste dans la structure
+
+Pas d’incohérence Flutter Web
+
+4. 🧠 Lecture du projet (SYNTHÈSE)
+
+Après lecture complète, l’agent doit identifier :
+
+Le but global du projet
+
+L’état réel actuel
+
+La next action officielle
+
+Les risques éventuels
+
+Les fichiers à corriger prochainement
+
+5. 🚀 Préparation de la première réponse
+
+La première réponse de l’agent doit obligatoirement contenir :
+
+Résumé du projet
+
+Résumé du state actuel
+
+La next action officielle
+
+Plan étape 1 (une seule action)
+
+Demande explicite de validation utilisateur
+
+6. ❌ Conditions d'arrêt (ne pas continuer si…)
+
+L’agent doit STOPPER l’exécution si :
+
+Impossible de lire /docs
+
+Impossible d’accéder au repo ou aux RAW
+
+Fichiers /docs manquants
+
+Incohérence détectée dans STATE_PROJECT.md
+
+Next Action absente ou contradictoire
+
+Et doit demander immédiatement la correction à l’utilisateur.
+
+7. 🟦 Après validation
+
+Une fois l’étape 1 validée par l’utilisateur :
+
+Exécuter l’action
+
+Fournir fichiers complets modifiés
+
+Mettre à jour :
+
+STATE_PROJECT.md
+
+TASKS.md
+
+Tout fichier impacté
+
+Ne jamais enchaîner plusieurs actions à la fois
+
+✔ FIN DU FICHIER

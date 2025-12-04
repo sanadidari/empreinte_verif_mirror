@@ -1,174 +1,195 @@
-# RULES.md — Règles Officielles du Projet (PRO MODE)
+📄 RULES.md — Version PRO
+🧠 RÈGLES OFFICIELLES — Agents GPT
 
----
+Projet : Sanad Idari — empreinte_verif
 
-# 🔷 RÈGLE D’OR — PRO MODE ABSOLU
-L’agent doit fonctionner **en mode professionnel strict** :
+Ces règles sont obligatoires, non négociables, et supersèdent toutes les autres instructions.
 
-- Réponses précises, structurées, sans blabla.
-- Priorité absolue à la fiabilité, la vérification et la documentation.
-- Un agent n’exécute JAMAIS une action sans validation explicite de l’utilisateur.
-- Une seule action technique par étape.
+1. 🔵 RÈGLE D’OR — PRO MODE OBLIGATOIRE
 
-**L’agent est responsable de la stabilité du projet.**
+L’agent doit toujours :
 
----
+Être précis
 
-# 🔷 RÈGLE 1 — Lecture et Chargement Obligatoires
-Avant toute réponse technique, l’agent doit OBLIGATOIREMENT :
+Structuré
 
-1. Lire les fichiers suivants dans `/docs` :  
-   - `STATE_PROJECT.md`  
-   - `TASKS.md`  
-   - `HISTORY.md`  
-   - `RULES.md`  
-   - `AGENT_START.md`  
-   - `VERCEL_DEPLOY.md`  
-   - `ARCHITECTURE.md`
+Professionnel
 
-2. Charger la branche **main** du dépôt GitHub :  
-   `https://github.com/sanadidari/empreinte_verif`
+Sans blabla inutile
 
-3. Vérifier l’état du projet :  
-   - `pubspec.yaml`  
-   - dossier `lib/`  
-   - dossier `web/`  
-   - workflow `build_web.yml`  
-   - fichier `vercel.json`  
+Sans invention
 
-4. Résumer :  
-   - Ce qu’il a compris du projet  
-   - L’état actuel  
-   - La vraie **prochaine action**
+Basé uniquement sur fichiers /docs + GitHub
 
-Aucune réponse technique n’est permise avant cette analyse.
+Avec transparence totale sur ce qu’il a lu ou pas
 
----
+Une seule action par réponse
 
-# 🔷 RÈGLE 2 — Processus PRO (obligatoire)
-Toute intervention suit EXACTEMENT ces étapes :
+❌ Interdits :
 
-1. **Proposition** (claire, structurée, limitée à 1 action)  
-2. **Validation utilisateur**  
-3. **Exécution** (fichier complet, pas d’extrait)  
-4. **Mise à jour obligatoire** :  
-   - `/docs/TASKS.md`  
-   - `/docs/HISTORY.md`  
-   - `/docs/STATE_PROJECT.md`  
-   - OU tout autre fichier impacté
+Supposer sans vérifier
 
-⚠️ Aucune étape n’est sautée.  
-⚠️ Aucun fichier ne doit être modifié partiellement.
+Deviner
 
----
+Imaginer du code
 
-# 🔷 RÈGLE 3 — Aucune invention
-L’agent NE DOIT JAMAIS :
-- inventer une étape du projet  
-- inventer un fichier  
-- créer un fichier sans validation  
-- interpréter sans vérifier dans GitHub  
-- modifier plusieurs choses à la fois  
+Répondre avant lecture des docs
 
-L’agent doit demander :  
-> “Souhaites-tu que j’exécute cette action ?”
+Faire plusieurs actions dans une seule réponse
 
----
+2. 🔵 Accès GitHub — Règle absolue
 
-# 🔷 RÈGLE 4 — Gestion du Déploiement (CI/CD)
-Déploiement officiel :
+L’agent doit absolument vérifier l’accès GitHub avant toute réponse technique.
 
-```
-GitHub → GitHub Actions → Vercel Production
-```
+✔ Dépôt public ?
+
+→ Lire directement.
+
+✔ Dépôt privé ?
+
+→ Tester URLs RAW :
+
+https://raw.githubusercontent.com/sanadidari/empreinte_verif/main/docs/AGENT_START.md
+
+❌ Inviter un bot GitHub
+
+Un agent GPT :
+
+ne peut pas accepter l’invitation
+
+ne peut pas se connecter à GitHub
+
+ne peut pas utiliser un token
+
+ne peut jamais accéder à un repo privé
+
+Si accès impossible :
+
+→ Demander une des solutions suivantes :
+
+rendre public
+
+fournir liens RAW
+
+copier-coller fichiers
+
+créer empreinte_verif_docs public
+
+3. 🔵 Vérification obligatoire avant action
 
 L’agent doit vérifier :
 
-- intégrité du workflow : `.github/workflows/build_web.yml`
-- token Vercel (`VERCEL_TOKEN`)
-- présence du dossier `build/web/`
-- mise à jour du fichier `vercel.json`
+AGENT_START.md lu
 
-Aucun déploiement manuel n’est autorisé.
+tous les fichiers /docs lus
 
----
+pubspec.yaml présent
 
-# 🔷 RÈGLE 5 — Vérification Flutter Web
-Avant de proposer un changement :
+lib/ présent
 
-- Vérifier `flutter clean` & `pub get`  
-- Vérifier la compatibilité SDK (`>=3.0.0 <4.0.0`)  
-- Vérifier le dossier `web/`  
-- Vérifier la cohérence du routing SPA  
+web/ présent
 
-⚠️ L’agent doit signaler tout risque : page blanche, routing 404, assets manquants.
+compatibilité Flutter Web
 
----
+état du repo GitHub (main)
 
-# 🔷 RÈGLE 6 — DNS & Domaine (Vercel)
-L’agent doit respecter les règles suivantes :
+présence ou absence de vercel.json
 
-- Le domaine officiel : `qrpruf.sanadidari.com`
-- DNS gérés chez HostPapa  
-- CNAME doit pointer vers :  
-  `*.vercel-dns-017.com` (pas l’ancien `cname.vercel-dns.com`)
-- SSL est automatique → agent NE doit JAMAIS tenter de le modifier
+4. 🔵 Workflow obligatoire
 
-Toute anomalie doit être :
-- Diagnostiquée
-- Documentée dans HISTORY.md
-- Corrigée étape par étape
+Chaque action doit suivre :
 
----
+1. Proposition
 
-# 🔷 RÈGLE 7 — Mise à jour Documentation `/docs`
-Après chaque action validée, l’agent met à jour :
+→ l’agent propose UNE action unique
 
-- `STATE_PROJECT.md`  
-- `TASKS.md`  
-- `HISTORY.md`  
-- `VERCEL_DEPLOY.md` (si déploiement ou DNS modifié)  
+2. Validation utilisateur
 
-Un agent ne doit jamais laisser l’état documentaire décalé.
+→ l’agent attend explicitement « oui je valide »
 
----
+3. Exécution
 
-# 🔷 RÈGLE 8 — Communication PRO
-- Toujours structuré  
-- Toujours clair  
-- Toujours en mode “ingénieur”  
-- Pas de phrases inutiles  
-- Résultats orientés production  
-- Fournir des fichiers complets, jamais partiels  
+→ l’agent fournit le fichier complet modifié
 
----
+4. Mise à jour /docs
 
-# 🔷 RÈGLE 9 — Interruption et sécurité
-L’agent doit interrompre toute action s'il détecte :
+→ STATE_PROJECT.md
+→ TASKS.md
+→ fichier impacté
 
-- incohérence dans l’état du projet  
-- conflit Git  
-- build cassé  
-- DNS invalide  
-- routing Flutter incorrect  
-- version SDK incompatible  
+5. 🔵 Déploiement — Règles strictes
 
-L’agent doit alors demander :
-> “Souhaites-tu que je corrige ce problème avant d’avancer ?”
+Toutes les opérations de déploiement doivent suivre :
 
----
+✔ Pipeline :
 
-# 🔷 RÈGLE 10 — Validation Obligatoire
-Sans validation explicite de l’utilisateur :  
-➡️ **Aucune action n’est autorisée.**
+GitHub → Vercel
 
-L’agent doit demander la validation avant :  
-- créer un fichier  
-- modifier un fichier  
-- déployer  
-- ajuster DNS  
-- modifier le pipeline CI/CD  
+✔ Build :
+flutter build web --release
 
----
+✔ Output :
+build/web
 
-# 🟩 FIN DU DOCUMENT — RULES.md (PRO MODE)
+✔ Framework :
+
+Other
+
+❌ Interdits :
+
+déploiement manuel FTP
+
+WinSCP
+
+VPS HostPapa
+
+scripts locaux non documentés
+
+watch dog local
+
+6. 🔵 Conditions d’arrêt
+
+L’agent doit STOPPER immédiatement si :
+
+un fichier /docs manque
+
+accès GitHub impossible
+
+Next Action incohérente
+
+état du projet contradictoire
+
+le code Flutter n’a pas été vérifié
+
+Et doit demander une correction ou clarification.
+
+7. 🔵 Transparence obligatoire
+
+L’agent doit indiquer :
+
+les fichiers lus
+
+leur source (GitHub/RAW/collé)
+
+timestamp de lecture
+
+toute limitation rencontrée
+
+8. 🔵 Exemples — Bon vs Mauvais comportement
+✔ BON :
+
+"J’ai lu AGENT_START.md (source : RAW GitHub), voici la prochaine action…"
+
+"Je ne peux pas accéder à GitHub, merci de rendre le dépôt public."
+
+"Je propose UNE action : mettre à jour NEXT_ACTION.md."
+
+❌ MAUVAIS :
+
+"Je pense que…"
+"Je suppose…"
+"J’invente…"
+"Je fais trois actions dans un message."
+"Je modifie sans validation."
+
+✔ FIN DU FICHIER
