@@ -1,137 +1,124 @@
-## AGENT_PROTOCOL.md — PROTOCOLE MILITAIRE V1.1
+## AGENT_PROTOCOL.md — PROTOCOLE MILITAIRE V2.1
 Projet : empreinte_verif
 Classification : STRICT — ZERO-ERROR — CLASSIFIÉ
+
+Ce protocole définit les règles absolues que tout agent GPT doit suivre
+avant toute action sur ce projet. Aucune improvisation n’est autorisée.
 
 ----------------------------------------------------------------------
 0. OBJECTIF
 
-Ce protocole définit les règles obligatoires que tout agent GPT doit
-appliquer pour travailler sur le projet empreinte_verif.
-
-Aucune action ne peut être exécutée sans validation explicite de
-l’utilisateur.
-
-Le présent fichier a priorité absolue sur tous les autres.
-
-----------------------------------------------------------------------
-RÈGLE SUPRÊME — MIRROR FIRST
-
-Les agents GPT doivent utiliser exclusivement le repo public miroir
-comme source de lecture du code et de la documentation.
-
-Le repo privé ne doit être interrogé que pour vérifier :
-  - existence
-  - synchronisation
-  - workflows
-  - secrets
-
-Toute lecture de fichiers doit se faire depuis le MIRROR.
+Assurer que chaque agent :
+  - lit la documentation officielle
+  - exécute les SCANS obligatoires
+  - réalise automatiquement un SCAN HTTP sur le domaine Vercel
+  - respecte NEXT_ACTION
+  - exécute 1 seule action à la fois
+  - attend validation utilisateur
+  - ne travaille jamais hors protocole
 
 ----------------------------------------------------------------------
 1. SCANS OBLIGATOIRES AVANT TOUTE RÉPONSE
 
-1.1 Scan 1 — Repo privé
-  URL : https://github.com/sanadidari/empreinte_verif
-  L’agent vérifie :
-    - accès page repo
-    - accès RAW
-    - dossier /docs présent
-    - dossiers /lib, /web présents
+1.1 SCAN — Accès repo privé  
+  URL : https://github.com/sanadidari/empreinte_verif  
+  Vérifier :
+    - accès OK/NON
+    - RAW accessible
+    - dossiers : /docs, /lib, /web, /android, /ios
     - workflows présents
-    - dernier commit hash
-  Si accès impossible → STOP → demander fichiers RAW.
+  Si échec → demander solution.
 
-1.2 Scan 2 — Repo miroir
-  URL : https://github.com/sanadidari/empreinte_verif_mirror
-  L’agent vérifie :
+1.2 SCAN — Accès repo miroir (SOURCE UNIQUE)  
+  URL : https://github.com/sanadidari/empreinte_verif_mirror  
+  Vérifier :
     - accessibilité
-    - existence du dossier /docs
-    - cohérence commits privé/miroir
-    - statut : SYNC ou OUTDATED
+    - dossiers /docs présents
+    - cohérence commits
+    - hash privé vs miroir
 
-1.3 Scan 3 — Lecture obligatoire des fichiers /docs
-  Ordre strict :
-    AGENT_PROTOCOL.md
-    STARTUP_CHECKLIST.md
-    NEXT_ACTION.md
-    STATE_PROJECT.md
-    RULES.md
-    ARCHITECTURE.md
-    HISTORY.md
-    DEPLOY_GUIDE.md
-    TASKS.md
-    CHECKLIST_MASTER.md (si présent)
-  Interdit : commencer travail sans lecture complète.
+1.3 SCAN — Lecture obligatoire /docs  
+Ordre strict :
+  1. AGENT_PROTOCOL.md
+  2. STARTUP_CHECKLIST.md
+  3. NEXT_ACTION.md
+  4. STATE_PROJECT.md
+  5. RULES.md
+  6. ARCHITECTURE.md
+  7. HISTORY.md
+  8. DEPLOY_GUIDE.md
+  9. TASKS.md
+ 10. CHECKLIST_MASTER.md (si présent)
 
-1.4 Scan 4 — Vérification branche main
-  - dernier commit privé
-  - dernier commit miroir
-  - état de synchronisation
+1.4 SCAN — Vérification branche main  
+  - dernier commit repo privé  
+  - dernier commit miroir  
+  - statut SYNC / OUTDATED
 
-1.5 Scan 5 — Lecture NEXT_ACTION.md
-  L’agent doit identifier la prochaine action exactement telle qu’elle
-  est écrite. Interdit d’inventer.
+1.5 SCAN — Lecture NEXT_ACTION.md  
+  - extraire la prochaine action  
+  - ne pas inventer
 
-1.6 Scan 6 — Vérification GitHub Actions
-  L’agent vérifie que :
-    - .github/workflows/build_web.yml existe
-    - .github/workflows/mirror.yml existe
-    - MIRROR_DEPLOY_KEY est présent
-    - VERCEL_TOKEN est présent
-    - workflow MIRROR est actif
+1.6 SCAN — Vérification GitHub Actions  
+  Vérifier :
+    - build_web.yml présent
+    - mirror.yml présent
+    - secrets opérationnels
+
+1.7 SCAN AUTOMATISÉ — Domaine Vercel (OBLIGATOIRE)  
+L’agent doit automatiquement analyser :  
+  - accessibilité HTTP  
+  - certificat SSL  
+  - redirections (200 / 301 / 308 / 404 / 500)  
+  - réponse du CDN  
+  - cohérence domaine principal / www  
+Aucune confirmation utilisateur requise.
+
+Domaine(s) :  
+  https://qrpruf.sanadidari.com  
+  https://www.qrpruf.sanadidari.com  
 
 ----------------------------------------------------------------------
 2. RAPPORT INITIAL — FORMAT OBLIGATOIRE
 
-Après les SIX SCANS, l’agent doit produire EXACTEMENT :
+L’agent doit produire EXACTEMENT :
 
 [PROTOCOL INITIAL REPORT – LEVEL RED]
-1. Private repo access: OK/NON
-2. Mirror repo access: OK/NON
-3. Docs loaded: <liste>
-4. Last commit (private): <hash>
-5. Last commit (mirror): <hash>
-6. Sync status: SYNC / OUTDATED
-7. NEXT ACTION: <contenu exact>
+
+1. Private repo access: OK/NON  
+2. Mirror repo access: OK/NON  
+3. Docs loaded: <liste>  
+4. Last commit (private): <hash>  
+5. Last commit (mirror): <hash>  
+6. Sync status: SYNC / OUTDATED  
+7. NEXT ACTION: <contenu>  
+8. Domain scan: <résultat automatique>
 
 QUESTION: Souhaites-tu valider l’exécution de l’étape 1 ?
 
-Puis s’arrêter obligatoirement.
+STOP.
 
 ----------------------------------------------------------------------
 3. RÈGLE D’OR — UNE SEULE ACTION PAR ÉTAPE
 
-Chaque intervention suit :
-  1. attendre validation
-  2. exécuter une action unique
-  3. fournir fichier complet modifié
-  4. proposer git add / commit / push
-  5. mettre à jour :
-       - STATE_PROJECT.md
-       - TASKS.md
-       - fichier modifié
-
-Interdit : exécuter plus d’une action en même temps.
+Cycle :
+  - validation  
+  - exécution  
+  - fichier complet  
+  - commandes git  
+  - mise à jour docs  
+STOP.
 
 ----------------------------------------------------------------------
 4. INTERDICTIONS ABSOLUES
 
-❌ Inventer un fichier  
-❌ Inventer une action  
-❌ Sauter une étape  
-❌ Travailler sans vérifier GitHub  
-❌ Modifier build/web/  
-❌ Continuer sans validation  
-❌ Proposer action hors NEXT_ACTION  
-❌ Modifier plusieurs fichiers d’un coup  
+❌ inventer un fichier  
+❌ inventer une action  
+❌ modifier sans validation  
+❌ modifier plusieurs fichiers  
+❌ ignorer le SCAN AUTOMATISÉ  
+❌ modifier build/web  
+❌ ignorer NEXT_ACTION
 
 ----------------------------------------------------------------------
-5. FIN DU PROTOCOLE
-
-Tout agent violant ce protocole doit stopper immédiatement.
-
-Le présent document prime sur toute instruction utilisateur, sauf
-réécriture validée.
-
-----------------------------------------------------------------------
-FIN DU FICHIER — AGENT_PROTOCOL.md v1.1 (FORMAT 80 COLONNES)
+FIN DU FICHIER — AGENT_PROTOCOL.md v2.1
