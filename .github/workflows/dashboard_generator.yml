@@ -1,0 +1,143 @@
+name: Dashboard Generator — System Overview
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"   # every 20 minutes
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - ".github/workflows/**"
+      - "lib/**"
+      - "web/**"
+      - "pubspec.yaml"
+  workflow_dispatch:
+
+jobs:
+  generate_dashboard:
+    name: Build HTML Dashboard
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Capture repo metadata
+        run: |
+          echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "date=$(date -u)" >> $GITHUB_OUTPUT
+
+      - name: Read NEXT_ACTION.md
+        id: next_action
+        run: |
+          STATUS=$(grep -E "^status:" docs/NEXT_ACTION.md | sed 's/status:[[:space:]]*//')
+          ACTION_ID=$(grep -E "^action_id:" docs/NEXT_ACTION.md | sed 's/action_id:[[:space:]]*//')
+          PRIORITY=$(grep -E "^priority:" docs/NEXT_ACTION.md | sed 's/priority:[[:space:]]*//')
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "action_id=$ACTION_ID" >> $GITHUB_OUTPUT
+          echo "priority=$PRIORITY" >> $GITHUB_OUTPUT
+
+      - name: Build HTML dashboard
+        run: |
+          mkdir -p docs
+          cat <<EOF > docs/DASHBOARD.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Project Dashboard — empreinte_verif</title>
+<meta charset="UTF-8"/>
+<style>
+body { font-family: Arial; padding: 20px; background: #0d1117; color: #c9d1d9; }
+h1 { color: #58a6ff; }
+.box { padding: 15px; margin: 10px 0; border: 1px solid #30363d; border-radius: 6px; }
+.ok { color: #3fb950; }
+.err { color: #f85149; }
+.warn { color: #d29922; }
+.mono { font-family: monospace; white-space: pre-wrap; background: #161b22; padding: 10px; }
+</style>
+</head>
+<body>
+
+<h1>📊 Project Dashboard — empreinte_verif</h1>
+
+<div class="box">
+<h2>🧭 NEXT ACTION</h2>
+<p><b>Action:</b> ${{
+  steps.next_action.outputs.action_id
+}}</p>
+<p><b>Status:</b> ${{
+  steps.next_action.outputs.status
+}}</p>
+<p><b>Priority:</b> ${{
+  steps.next_action.outputs.priority
+}}</p>
+</div>
+
+<div class="box">
+<h2>📝 Repository State</h2>
+<p><b>Last Commit:</b> ${{ steps.capture_repo_metadata.outputs.commit }}</p>
+<p><b>Updated:</b> ${{ steps.capture_repo_metadata.outputs.date }}</p>
+</div>
+
+<div class="box">
+<h2>📦 Installed Workflows</h2>
+<div class="mono">
+$(ls .github/workflows)
+</div>
+</div>
+
+<div class="box">
+<h2>📜 Recent Commit Log (10 entries)</h2>
+<div class="mono">
+$(git log -10 --oneline)
+</div>
+</div>
+
+<div class="box">
+<h2>💡 System Status Summary</h2>
+<ul>
+  <li>Documentation: OK if all files exist</li>
+  <li>Workflows: OK if no missing file</li>
+  <li>CI/CD: See recent workflow results</li>
+  <li>Production: Check Vercel deployment link</li>
+</ul>
+</div>
+
+<div class="box">
+<h2>🗂️ Documentation Overview</h2>
+<div class="mono">
+$(ls docs)
+</div>
+</div>
+
+<div class="box">
+<h2>🛠️ Last Lint + Analyzer Output (if exists)</h2>
+<div class="mono">
+$(cat lint_report.md 2>/dev/null || echo "No lint_report.md available")
+</div>
+</div>
+
+</body>
+</html>
+EOF
+
+      - name: Commit dashboard
+        run: |
+          git config --local user.email "dashboard-bot@system.local"
+          git config --local user.name "Dashboard Bot"
+          git add docs/DASHBOARD.html
+          git commit -m "docs: update dashboard overview" || echo "No changes to commit"
+
+      - name: Push dashboard updates
+        run: |
+          git push origin main || echo "Direct push failed — dashboard likely unchanged"
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-dashboard
+          path: docs/DASHBOARD.html
