@@ -1,0 +1,108 @@
+name: Post-Deploy Tests — Flutter Web on Vercel
+
+on:
+  workflow_run:
+    workflows: ["CI / CD — Flutter Web → Vercel"]
+    types:
+      - completed
+
+env:
+  DOMAIN: "https://qrpruf.sanadidari.com"
+
+jobs:
+  run_post_deploy_tests:
+    name: Run E2E integrity tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Skip if deploy failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: |
+          echo "Previous workflow failed. No E2E tests will run."
+          exit 0
+
+      - name: Wait for deployment propagation
+        run: |
+          echo "Waiting 10 seconds for Vercel to propagate globally..."
+          sleep 10
+
+      - name: Test 01 — Main page HTTP status
+        run: |
+          STATUS=$(curl -s -o page.html -w "%{http_code}" "$DOMAIN")
+          echo "Status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "ERROR: Unexpected HTTP status $STATUS"
+            exit 10
+          fi
+
+      - name: Test 02 — Check HTML size
+        run: |
+          SIZE=$(wc -c < page.html)
+          echo "Size: $SIZE bytes"
+          if [ "$SIZE" -lt 3000 ]; then
+            echo "ERROR: HTML too small — site might be broken"
+            exit 11
+          fi
+
+      - name: Test 03 — Check for error keywords
+        run: |
+          if grep -iE "exception|error|stacktrace|not found|Cannot GET" page.html; then
+            echo "ERROR: Critical error found in HTML"
+            exit 12
+          fi
+          echo "✔ No error keywords detected."
+
+      - name: Test 04 — Check Flutter main.ts.js
+        run: |
+          STATUS=$(curl -s -o main.js -w "%{http_code}" "$DOMAIN/main.dart.js")
+          echo "main.dart.js status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "ERROR: main.dart.js missing"
+            exit 13
+          fi
+          SIZE=$(wc -c < main.js)
+          if [ "$SIZE" -lt 200000 ]; then
+            echo "ERROR: main.dart.js appears corrupted"
+            exit 14
+          fi
+          echo "✔ main.dart.js OK"
+
+      - name: Test 05 — Check manifest.json
+        run: |
+          STATUS=$(curl -s -o manifest.json -w "%{http_code}" "$DOMAIN/manifest.json")
+          if [ "$STATUS" != "200" ]; then
+            echo "ERROR: Manifest missing"
+            exit 15
+          fi
+          echo "✔ manifest.json OK"
+
+      - name: Test 06 — Icons existence
+        run: |
+          ICON=$(curl -s -o icon.png -w "%{http_code}" "$DOMAIN/icons/Icon-192.png")
+          if [ "$ICON" != "200" ]; then
+            echo "ERROR: Missing icon Icon-192.png"
+            exit 16
+          fi
+          echo "✔ Icons OK"
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-deploy-tests
+          path: |
+            page.html
+            main.js
+            manifest.json
+            icon.png
+
+      - name: Notify PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number || context.payload.pull_request?.number || 1,
+              body: "✔ All post-deploy tests passed. Production is healthy."
+            })
