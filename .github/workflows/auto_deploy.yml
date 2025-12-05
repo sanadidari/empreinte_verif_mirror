@@ -1,0 +1,77 @@
+name: Auto Deploy (Mode 4 - Mix IA + Commit + Timer)
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 */4 * * *'   # every 4 hours (UTC)
+
+jobs:
+  self-diagnose:
+    runs-on: ubuntu-latest
+    outputs:
+      diagnose_status: ${{ steps.diagnose.outputs.status }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run self-diagnosis script
+        run: |
+          chmod +x .github/scripts/self_diagnose.sh
+          .github/scripts/self_diagnose.sh
+        id: diagnose
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set output
+        run: |
+          echo "::set-output name=status::ok"
+
+  auto-repair:
+    needs: self-diagnose
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run auto-repair if needed
+        run: |
+          chmod +x .github/scripts/auto_repair.sh
+          .github/scripts/auto_repair.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-deploy:
+    needs: [self-diagnose, auto-repair]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter clean & pub get
+        run: |
+          flutter clean
+          flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel (Production)
+        run: |
+          npx vercel --prod --confirm --token="$VERCEL_TOKEN" --scope=sanad-idari build/web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

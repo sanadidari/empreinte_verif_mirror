@@ -58,4 +58,10 @@ Puis se taire en attente de validation.
 9. RÈGLE SUPRÊME
 (… contenu inchangé …)
 
+## ADDITION: Auto-scan policy (Mode 4)
+Quand Mode 4 est activé par le propriétaire :
+- Les agents peuvent lancer automatiquement des scans HTTP/SSL et health-checks en lecture seule.
+- Les agents peuvent déclencher self-diagnose & auto-repair workflows si la stratégie le recommande.
+- Les agents restent soumis aux interdictions déjà listées (pas de secrets, pas de modifications build/web).
+
 🟥 FIN DU FICHIER — RULES.md v3.0

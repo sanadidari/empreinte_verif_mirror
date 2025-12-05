@@ -1,66 +1,63 @@
-# AGENT_PROTOCOL v3.1 — Military Autonomous Mode
+# AGENT_PROTOCOL.md — PROTOCOL MILITAIRE V3.0 (FULL INTELLIGENCE)
 
-## 1. Rôle de l’Agent
-L’agent opère en mode PRO, autonome, structuré, militaire, sans hésitation.
+Projet : empreinte_verif — Niveau : STRICT / ZERO-ERROR / CLASSIFIÉ
 
-Il doit :
-- exécuter automatiquement tous les scans
-- appliquer toutes les règles sans demander la permission
-- coordonner avec modules IA v4 → v12
-- signaler seulement ce que l’humain ne peut pas faire
+## 0. OBJECTIF
+Ce protocole définit les règles obligatoires que tout agent GPT doit suivre pour travailler sur le projet empreinte_verif.
+Aucune action n’est autorisée sans validation explicite de l’utilisateur, sauf exceptions décrites (Mode 4 autorisé par le propriétaire).
 
----
+## 1. SCANS OBLIGATOIRES AVANT TOUTE RÉPONSE
+L’agent effectue 6 scans obligatoires (privé, miroir, docs, branches, NEXT_ACTION, GitHub Actions).
+→ (description inchangée et obligatoire)
 
-## 2. Règles Générales PRO
-- Toujours analyser avant d’agir
-- Toujours optimiser
-- Toujours rapporter clairement
-- Toujours réduire le travail humain
+## 2. MODE D'AUTONOMIE (Mode 4 — Mix IA + Commit + Timer)
+Le propriétaire a autorisé explicitement Mode 4 (OUI MODE 4). Dans ce mode :
+- Agents peuvent exécuter automatiquement les tâches de diagnostic, réparation non destructive, build et déploiement si :
+  - les workflows d’autodiagnostic retournent "OK" ou mesures réparées.
+  - aucun secret sensible n’est exposé.
+- Agents DOIVENT journaliser chaque action dans HISTORY.md et STATE_PROJECT.md.
+- Agents DOIVENT demander validation pour toute modification manuelle de code source applicatif (lib/*) qui change la logique métier.
+- Autorisé : modifications automatisées non invasives (scripts, docs, workflows).
+- Interdit : committer des secrets, modifier build/web ou ajouter des clés privées.
 
----
+## 3. RAPPORT INITIAL — FORMAT OBLIGATOIRE
+Après les scans, l’agent produira exactement :
+[PROTOCOL INITIAL REPORT – LEVEL RED]
+1. Private repo access: OK/NON
+2. Mirror repo access: OK/NON
+3. Docs loaded: <liste>
+4. Last commit (private): <hash>
+5. Last commit (mirror): <hash>
+6. Sync status: SYNC / OUTDATED
+7. NEXT ACTION: <copie exacte>
 
-## 3. Autonomie Active
-L’agent doit automatiquement :
-- 🔍 Lancer SCAN HTTP/SSL
-- 🧠 Lancer Predictive Engine (v9)
-- 🛡 Appliquer Rollback Policy (v10)
-- 📝 Mettre à jour docs (v11)
-- 🔗 Coordonner les modules (v12)
-- 🔧 Corriger code (v5)
-- 🌀 Refactor Flutter (v6)
-- 🎨 Analyser UI (v7)
-- 📡 Surveiller production 24/24 (v8)
+Puis attendre validation sauf si Mode 4 est actif et la NEXT_ACTION est 'Run self-diagnosis / Auto-deploy' — dans ce cas l’agent peut exécuter et ensuite rapporter.
 
----
+## 4. RÈGLES D'OR
+- Toujours fournir le fichier complet corrigé.
+- Une seule action par étape sauf opérations automatisées approuvées (Mode 4).
+- Jamais exposer les secrets.
 
-## 4. Hiérarchie de Décision
-1. Sécurité
-2. Fiabilité
-3. Fonctionnalité
-4. Performance
-5. Esthétique
+## 5. MODULES AUTONOMES (v4-v12)
+Le système face à Mode 4 utilise un ensemble de modules autonomes :
+- v4 — Self Diagnosis (scan HTTP/SSL, workflows, assets)
+- v5 — Auto-Repair (corriger manifestes, petits fixes, re-generate assets)
+- v6 — Intelligence Flutter Avancée (analyse static/dartfmt, suggestion refactor)
+- v7 — UI Analysis (screenshots, diff visuel, accessibility checks)
+- v8 — Production Observer (24/7 health checks)
+- v9..v12 — Extended automation (auto-refactor rules, rollback manager, security hardening, telemetry)
+Les agents doivent enregistrer chaque exécution dans STATE_PROJECT.md et HISTORY.md.
 
----
+## 6. CONDITIONS D'ARRÊT
+Agent stop immédiatement si :
+- un secret manquant ou exposé
+- build produit erreur critique
+- miroir non disponible
+- directive humaine explicite : "STOP"
 
-## 5. Modes Opérationnels
-- Mode SCAN
-- Mode REPAIR
-- Mode REFACTOR
-- Mode OBSERVER
-- Mode PREDICTIVE
-- Mode MATRIX (v12)
+## 7. MISE EN PRATIQUE
+- Les workflows GitHub appropriés doivent exister (.github/workflows/auto_deploy.yml).
+- Les scripts doivent être non-interactifs et idempotents.
+- Les logs doivent être produits à chaque étape.
 
----
-
-## 6. Communication
-L’agent doit :
-- prévenir en cas de risque élevé
-- proposer solutions automatiques
-- déclencher auto-repair si possible
-
----
-
-## 7. Interdictions
-- demander confirmation pour quelque chose qu’il peut faire seul  
-- ignorer une erreur visible  
-- ignorer un scan réseau  
+FIN — AGENT_PROTOCOL.md v3.0 (Mode 4 activé)

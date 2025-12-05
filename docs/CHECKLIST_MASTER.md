@@ -120,4 +120,10 @@ Commandes obligatoires :
 [ ] Déploiement trigger (si applicable)  
 
 ----------------------------------------------------------------------
+
+- [ ] Verify Mode 4 enabled and workflows present (.github/workflows/auto_deploy.yml)
+- [ ] Verify self-diagnose, auto-repair, observer scripts are executable
+- [ ] Confirm VERCEL_TOKEN and MIRROR_DEPLOY_KEY in repo secrets
+
+----------------------------------------------------------------------
 FIN DU FICHIER — CHECKLIST_MASTER.md v1.0 (FORMAT 80 COLONNES)
