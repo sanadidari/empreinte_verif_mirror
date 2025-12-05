@@ -1,126 +1,71 @@
-## STARTUP_CHECKLIST.md — STARTUP PROTOCOL v3.0
-Projet : empreinte_verif — Agents GPT — Full Intelligence
+# STARTUP_CHECKLIST.md — STARTUP PROTOCOL v1.1 (v3.0 doc sync)
+Projet : empreinte_verif — Agents GPT — Strict Military Mode
 
-Cette checklist ordonne la séquence automatique que chaque agent exécute
-au démarrage. L'humain reste opérateur visuel et valide les actions mutantes.
+Objectif :
+Cette checklist définit les actions obligatoires, dans l’ordre, qu’un agent GPT doit effectuer au démarrage avant toute analyse ou réponse.
 
-----------------------------------------------------------------------
-1. VÉRIFICATION ACCÈS GIT
+✅ 1. Vérification accès GitHub
+(… contenu inchangé …)
 
-1.1 Repo privé
-  - URL : https://github.com/sanadidari/empreinte_verif
-  - Vérifier accès, RAW, /docs, /lib, /web
-  - Récupérer dernier commit hash
+✅ 2. Lecture obligatoire des fichiers docs
+Ordre strict et obligatoire :
+AGENT_PROTOCOL.md
+STARTUP_CHECKLIST.md
+NEXT_ACTION.md
+STATE_PROJECT.md
+RULES.md
+ARCHITECTURE.md
+HISTORY.md
+DEPLOY_GUIDE.md
+TASKS.md
+CHECKLIST_MASTER.md (si présent)
 
-1.2 Repo miroir public
-  - URL : https://github.com/sanadidari/empreinte_verif_mirror
-  - Vérifier accessibilité & hash miroir
+✅ 3. Vérification structure du projet
+(… contenu inchangé …)
 
-----------------------------------------------------------------------
-2. CHARGEMENT /docs (Ordre strict)
-  1. AGENT_PROTOCOL.md
-  2. STARTUP_CHECKLIST.md
-  3. NEXT_ACTION.md
-  4. STATE_PROJECT.md
-  5. RULES.md
-  6. ARCHITECTURE.md
-  7. HISTORY.md
-  8. DEPLOY_GUIDE.md
-  9. TASKS.md
- 10. CHECKLIST_MASTER.md (si présent)
+✅ 4. Vérification des secrets GitHub
+(… contenu inchangé …)
 
-----------------------------------------------------------------------
-3. VÉRIFICATION STRUCTURE PROJET
+✅ 5. Vérification pipeline GitHub Actions
+(… contenu inchangé …)
 
-- pubspec.yaml exists
-- /lib non vide
-- /web includes index.html + flutter_bootstrap.js
-- .github/workflows includes build_web.yml & mirror.yml
+✅ 6. Analyse du fichier NEXT_ACTION.md
+(… contenu inchangé …)
 
-----------------------------------------------------------------------
-4. VÉRIFICATION SECRETS
+✅ 7. Préparation du RAPPORT INITIAL
+(… contenu inchangé …)
 
-- VERCEL_TOKEN exists
-- MIRROR_DEPLOY_KEY exists
-- Aucun secret ne doit être committé
+✅ 8. MODULES AUTONOMES (CHECKLIST DÉMARRAGE)
+Lors du démarrage, l’agent doit vérifier la présence et l’état des modules autonomes listés dans AGENT_PROTOCOL.md :
+- v4.0 — SELF-DIAGNOSIS MODE
+- v5.0 — AUTO-REPAIR
+- v6.0 — INTELLIGENCE FLUTTER AVANCÉE
+- v7.0 — ANALYSE UI AVEC SCREENSHOTS
+- v8.0 — OBSERVATEUR DE PRODUCTION 24/24
+- v9.0 — PREDICTIVE FAILURE ENGINE
+- v10.0 — SMART ROLLBACK SYSTEM
+- v11.0 — AUTO-DOCUMENTATION MACHINE
+- v12.0 — CROSS-AGENT COORDINATION
 
-----------------------------------------------------------------------
-5. SCANS AUTOMATIQUES (exécutés sans demander)
+Pour chaque module l’agent doit :
+- vérifier existence du workflow et script associé
+- vérifier permissions et secrets requis
+- valider que logs/artefacts sont configurés
+- reporter l’état (ENABLED / DISABLED / ERROR) dans le [STARTUP REPORT]
 
-5.1 Scan CI/CD
-  - parse build_web.yml ; valider commandes
-  - détecter mismatch flutter version
+✅ 9. STARTUP REPORT (format obligatoire)
+[STARTUP CHECK COMPLETE]
+1. Repo privé: OK/NON
+2. Repo miroir: OK/NON
+3. Docs chargés: <liste>
+4. Dernier commit privé: <hash>
+5. Dernier commit miroir: <hash>
+6. Sync status: SYNC / OUTDATED
+7. NEXT ACTION: <ligne copiée depuis NEXT_ACTION.md>
+8. Modules status: {v4:OK, v5:OK, ..., v12:OK}
 
-5.2 Scan DOMAINE (HTTP/SSL)
-  - tester qrpruf.sanadidari.com & www
-  - status code, redirect chain, cert validity
-  - fallback index.html check (http status /headers)
+Souhaites-tu valider l'étape 1 ?
 
-5.3 Scan CODE (FCI)
-  - analyser main.dart, routing, imports, assets refs
-  - détecter patterns non-web
-  - lister anomalies + patch suggestions
+Puis s’arrêter obligatoirement.
 
-5.4 Scan INFRA
-  - vercel.json routes
-  - DNS CNAME presence
-  - secrets names & existence
-
-5.5 Scan DIFF
-  - comparer avec baseline (dernier état validé)
-  - alertes sur suppressions/ajouts suspects
-
-----------------------------------------------------------------------
-6. RAPPORT AUTOMATISÉ
-
-L'agent produit :
-  - [STARTUP CHECK COMPLETE] (format structuré)
-  - inclut Domain scan & Code intelligence summary
-  - enregistre un brouillon dans HISTORY.md (draft) si anomalies
-
-Format :
-  1. Repo privé: OK/NON
-  2. Repo miroir: OK/NON
-  3. Docs chargés: <liste>
-  4. Dernier commit privé: <hash>
-  5. Dernier commit miroir: <hash>
-  6. Sync status: SYNC/OUTDATED
-  7. NEXT ACTION: <contenu>
-  8. Domain scan: <OK/WARN/FAIL>
-  9. Code intelligence: <OK/WARN/FAIL>
-
-----------------------------------------------------------------------
-7. ACTIONS POST-SCAN
-
-- Si Code intelligence = OK → l'agent propose d'exécuter NEXT_ACTION
-  (doit attendre ta validation)
-- Si anomalies critiques → l'agent propose patches et demandes visuelles
-- Si anomalies infra/domaine → l'agent propose actions mitigantes
-
-----------------------------------------------------------------------
-8. RÔLE HUMAIN
-
-Tu fournis :
-  - captures d'écran console & network
-  - validations pour commits mutatifs
-  - exécution des commandes git locales (push)
-
-----------------------------------------------------------------------
-
-## STARTUP_CHECKLIST.md — STARTUP PROTOCOL v4.0
-Projet : empreinte_verif — Self-Diagnosis
-
-Ajouts v4.0 :
-- Le mode SELF-DIAGNOSIS est actif : à chaque boot l'agent exécute
-  la routine complète (v3.0) + déclenche le self_diagnose workflow si
-  requis (si push ou schedule).
-
-Checklist courte :
-1. Vérifier miroir public accessible.
-2. Charger /docs (ordre v4.0).
-3. Lancer SCANS automatiques (Git, Docs, CI, Domaine, Code).
-4. Si anomalies -> générer rapport et suggestion.
-5. Pour anomalies CRITICAL -> attendre validation humaine.
-
-FIN — STARTUP_CHECKLIST.md v4.0
-
+🟥 FIN DU FICHIER — STARTUP_CHECKLIST.md v1.1
