@@ -1,70 +1,46 @@
-name: Self Diagnosis — v4.0
+name: Self Diagnosis (v4.x Military Edition)
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
   schedule:
-    # daily at 03:30 UTC (modifiable)
-    - cron: '30 3 * * *'
-  workflow_dispatch: {}
+    - cron: "0 */6 * * *"   # every 6 hours
+  push:
+    branches: [ main ]
 
 jobs:
-  self-diagnose:
+  diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up Node (for optional tools)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.0'
+          flutter-version: stable
 
-      - name: Ensure execute permissions on scripts
+      - name: Make diagnose script executable
+        run: chmod +x .github/scripts/self_diagnose.sh
+
+      - name: Run self-diagnosis
+        id: diag
         run: |
-          chmod +x .github/scripts/self_diagnose.sh || true
+          set +e
+          .github/scripts/self_diagnose.sh
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit 0
 
-      - name: Run self diagnosis script
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOMAIN: qrpruf.sanadidari.com
-          MIRROR_REPO: sanadidari/empreinte_verif_mirror
-        run: |
-          ./.github/scripts/self_diagnose.sh
-
-      - name: Upload diagnostics artifact
+      - name: Upload diagnostic artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: diagnostics-logs
-          path: diagnostics || diagnostic || ./diagnostics || .
+          name: diagnostics
+          path: diagnostics/
 
-      - name: Open GitHub Issue on CRITICAL (if created by script)
-        if: steps.self_diagnose.outcome == 'failure' || always()
-        uses: actions/github-script@v7
+      - name: Create GitHub Issue (Critical Only)
+        if: steps.diag.outputs.exit_code == '2'
+        uses: peter-evans/create-issue-from-file@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const path = './diagnostics/issue.json';
-            if (fs.existsSync(path)) {
-              const content = JSON.parse(fs.readFileSync(path, 'utf8'));
-              const title = content.title || 'Self-Diagnosis: Critical issue detected';
-              const body = content.body || 'Auto-report attached.';
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-              });
-            } else {
-              core.info('No issue.json found — nothing to post.');
-            }
+          title: "CRITICAL: Auto-Diagnosis Failure Detected"
+          content-filepath: diagnostics/issue.json
+          labels: critical, auto-diagnose
