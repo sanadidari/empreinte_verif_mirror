@@ -1,0 +1,62 @@
+name: Agent Trigger — Remote Workflow Executor
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_workflow:
+        description: "Workflow to trigger (ci_cd | rollback | post_tests | healthcheck)"
+        required: true
+      reason:
+        description: "Reason for triggering — provided by the agent"
+        required: false
+
+jobs:
+  trigger:
+    name: Trigger selected workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show trigger info
+        run: |
+          echo "== AGENT TRIGGER =="
+          echo "Workflow requested: ${{ github.event.inputs.target_workflow }}"
+          echo "Reason: ${{ github.event.inputs.reason }}"
+
+      - name: Trigger CI/CD
+        if: ${{ github.event.inputs.target_workflow == 'ci_cd' }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "CI / CD — Flutter Web → Vercel"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Rollback
+        if: ${{ github.event.inputs.target_workflow == 'rollback' }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "Rollback — Vercel Auto-Restore"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Post-Deploy Tests
+        if: ${{ github.event.inputs.target_workflow == 'post_tests' }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "Post-Deploy Tests — Flutter Web on Vercel"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Healthcheck
+        if: ${{ github.event.inputs.target_workflow == 'healthcheck' }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "Healthcheck — Production Monitor"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report to GitHub
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number || context.payload.pull_request?.number || 1,
+              body: `🤖 Agent Trigger executed.\nWorkflow launched: **${{ github.event.inputs.target_workflow }}**\nReason: *${{ github.event.inputs.reason }}*`
+            })
