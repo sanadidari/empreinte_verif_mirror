@@ -1,0 +1,92 @@
+name: Sentry Integration — Error & Crash Pipeline
+
+on:
+  workflow_run:
+    workflows:
+      - "CI / CD — Flutter Web → Vercel"
+      - "Auto Deploy — Flutter Web → Vercel"
+      - "Auto Lint & Fix — Flutter Code Maintainer"
+      - "Reporting Aggregator — Logs & Alerts"
+      - "Post-Deploy Tests — Flutter Web on Vercel"
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+jobs:
+  sentry_event_pipeline:
+    name: Send error events & artifacts to Sentry
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Sentry CLI
+        run: |
+          curl -sL https://sentry.io/get-cli/ | bash
+          sentry-cli --version
+
+      - name: Validate Sentry configuration
+        run: |
+          if [ -z "$SENTRY_ORG" ] || [ -z "$SENTRY_PROJECT" ] || [ -z "$SENTRY_AUTH_TOKEN" ]; then
+            echo "Sentry not fully configured. Skipping."
+            exit 0
+          fi
+
+      - name: Build minimal event payload
+        id: payload
+        run: |
+          WF="${{ github.event.workflow_run.name }}"
+          CONCL="${{ github.event.workflow_run.conclusion }}"
+          RUNID="${{ github.event.workflow_run.id }}"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+
+          mkdir -p /tmp/sentry
+          cat <<EOF > /tmp/sentry/event.json
+{
+  "event_id": "$(uuidgen | tr -d '-')",
+  "platform": "other",
+  "level": "${CONCL == 'success' ? 'info' : 'error'}",
+  "environment": "production",
+  "release": "$SHORT_SHA",
+  "message": "Workflow $WF finished with $CONCL",
+  "extra": {
+    "run_id": "$RUNID",
+    "workflow": "$WF",
+    "commit": "$SHORT_SHA",
+    "repo": "${GITHUB_REPOSITORY}"
+  }
+}
+EOF
+
+      - name: Send Sentry event
+        run: |
+          sentry-cli upload-dif \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            /tmp/sentry/event.json || true
+
+          sentry-cli send-event \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            -f /tmp/sentry/event.json || echo "Non-blocking Sentry failure"
+
+      - name: Upload artifacts to Sentry (optional)
+        run: |
+          if compgen -G "vercel_output.txt" > /dev/null; then
+            sentry-cli releases files "$SHORT_SHA" upload vercel_output.txt || true
+          fi
+          if compgen -G "lint_report.md" > /dev/null; then
+            sentry-cli releases files "$SHORT_SHA" upload lint_report.md || true
+          fi
+          echo "Artifacts uploaded to Sentry release $SHORT_SHA (if available)."
+
+      - name: Final log
+        run: echo "Sentry event pipeline completed."
