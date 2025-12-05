@@ -1,0 +1,94 @@
+name: Auto Deploy — Flutter Web → Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "lib/**"
+      - "web/**"
+      - "pubspec.yaml"
+      - ".github/workflows/auto_deploy_flutter_web.yml"
+
+  workflow_dispatch:
+
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  build_and_deploy:
+    name: Build Flutter Web & Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web (release)
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build web --release --no-tree-shake-icons
+        continue-on-error: false
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        id: vercel_deploy
+        run: |
+          DEPLOY_OUTPUT=$(vercel deploy build/web \
+            --prod \
+            --token=$VERCEL_TOKEN \
+            --yes \
+            --scope=$VERCEL_ORG_ID \
+            --confirm \
+            2>&1)
+
+          echo "$DEPLOY_OUTPUT" > vercel_output.txt
+
+          URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo "https://[a-zA-Z0-9.-]+.vercel.app" | head -n 1)
+          echo "vercel_url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Verify deployment URL
+        run: |
+          if [ -z "${{ steps.vercel_deploy.outputs.vercel_url }}" ]; then
+            echo "ERROR: No Vercel URL detected in output."
+            exit 50
+          fi
+          echo "Deployment successful at:"
+          echo "${{ steps.vercel_deploy.outputs.vercel_url }}"
+
+      - name: Upload deployment logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-deploy-logs
+          path: vercel_output.txt
+
+      - name: Notify GitHub
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: 1,
+              body: `🚀 Flutter Web deployed to Vercel!\nURL: **${{ steps.vercel_deploy.outputs.vercel_url }}**`
+            })
+
+      - name: Trigger Post-Deploy Tests
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "Post-Deploy Tests — Flutter Web on Vercel"
+          token: ${{ secrets.GITHUB_TOKEN }}
