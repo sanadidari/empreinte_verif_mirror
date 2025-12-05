@@ -1,114 +1,91 @@
-# STATE_PROJECT.md — PROJECT STATUS INTEL REPORT (v2.4)
-Mise à jour : Modules autonomes v9 → v12
-Statut Général : Système 80% Autonome — Opérationnel — Surveillé 24/24
+# STATE_PROJECT.md — MACHINE STATE FILE v1.0
+project: empreinte_verif
+state_version: 1.0
+generated_by: machine
+last_update: auto
 
----
+## DIRECTORIES
+flutter:
+  root: "/"
+  lib: "/lib"
+  web: "/web"
+  android: "/android"
+  ios: "/ios"
+  github: "/.github"
+  workflows: "/.github/workflows"
+  docs: "/docs"
 
-## Intelligence Historique (résumé)
-- v4.0 — Self-diagnosis activé
-- v5.0 — Auto-repair module ajouté
-- v6.0 — Intelligence Flutter Avancée
-- v7.0 — UI Analysis (screenshots)
-- v8.0 — Production Observer 24/7
-- v9..v12 — Modules autonomes (refactor, rollback, telemetry, security hardening)
----
+## FLUTTER_STATUS
+flutter_sdk: "stable"
+web_support: true
+platforms:
+  - web
+  - android
+  - ios
 
-## Intelligence Historique (résumé)
-- v4.0 — Self-diagnosis activé
-- v5.0 — Auto-repair module ajouté
-- v6.0 — Intelligence Flutter Avancée
-- v7.0 — UI Analysis (screenshots)
-- v8.0 — Production Observer 24/7
-- v9..v12 — Modules autonomes (refactor, rollback, telemetry, security hardening)
+## BUILD_TARGETS
+web:
+  command: "flutter build web --release"
+  output: "build/web"
+  critical_files:
+    - "index.html"
+    - "main.dart.js"
+    - "flutter_bootstrap.js"
+    - "manifest.json"
+    - "favicon.png"
 
-## 🔵 2. Architecture Globale Actuelle
-Le système est composé de :
+## GITHUB_ACTIONS
+ci_cd:
+  file: ".github/workflows/ci_cd.yml"
+  enabled: true
+rollback:
+  file: ".github/workflows/rollback.yml"
+  enabled: true
+post_tests:
+  file: ".github/workflows/post_deploy_tests.yml"
+  enabled: true
+healthcheck:
+  file: ".github/workflows/healthcheck.yml"
+  enabled: true
+agent_trigger:
+  file: ".github/workflows/agent_trigger.yml"
+  enabled: true
+heartbeat:
+  file: ".github/workflows/agent_heartbeat.yml"
+  enabled: true
 
-### ● Agents Logiques (ChatGPT)
-- Agent_START → Boot + reset + préparation mission
-- Agent_PROTOCOL → Application stricte du protocole militaire
-- Agent_SCAN → SCAN HTTP/SSL/Web/Backend
-- Agent_AI → Analyse Flutter avancée
-- Agent_UI → Analyse interface utilisateur
-- Agent_OBSERVER → Surveillance 24/24
+## VERCEL_CONFIGURATION
+domain: "qrpruf.sanadidari.com"
+requires:
+  - VERCEL_TOKEN
+  - VERCEL_ORG_ID
+  - VERCEL_PROJECT_ID
 
-### ● Modules Automatiques GitHub Actions (v4 → v12)
-| Module | Fonction | Statut |
-|--------|----------|--------|
-| v4.0 Self-Diagnosis | Analyse risques complète | ✔️ Actif |
-| v5.0 Auto-Repair | Corrige erreurs de code | ✔️ Actif |
-| v6.0 Flutter Refactor | Optimise architecture | ✔️ Actif |
-| v7.0 UI Analyzer | Analyse via screenshots | ✔️ Actif |
-| v8.0 Production Observer | Monitor 24/24 | ✔️ Actif |
-| v9.0 Predictive Engine | Système prédictif d’échec | ✔️ Actif |
-| v10.0 Rollback Policy | Sauvegarde + rollback | ✔️ Actif |
-| v11.0 Auto-Documentation | Mise à jour docs | ✔️ Actif |
-| v12.0 Cross-Agent Matrix | Coordination agents | ✔️ Actif |
+## DOCS_REQUIRED
+- "AGENT_START.md"
+- "DOCS_MANIFEST.yaml"
+- "NEXT_ACTION.md"
+- "DOCS_SCAN_INSTRUCTIONS.md"
+- "STATE_PROJECT.md"
+- "TASKS.md"
+- "AGENT_PROTOCOL.md"
+- "CHECKLIST_MASTER.md"
 
----
+## MACHINE_RULES
+strict_mode: true
+auto_sync: true
+allow_scan_repair: true
 
-## 🔵 3. Modules v9 → v12 — Intégration Officielle
+## HEALTH_SENSORS
+monitoring:
+  html_min_size: 3000
+  main_js_min_size: 200000
+  allow_404: false
+  check_manifest: true
+  check_icons: true
 
-### ✔ v9 Predictive Engine  
-Analyse :
-- code Flutter
-- réseau
-- web
-- erreurs GitHub Actions  
-Génère **diagnostics + alertes + priorités**.
+## NEXT_ACTION_POINTER
+source: "/docs/NEXT_ACTION.md"
+blocking: true
 
-### ✔ v10 Rollback Policy  
-Déclenche rollback si :
-- uptime < seuil
-- erreurs HTTP dépassent 10%
-- build échoue 2 fois
-- temps de réponse trop haut
-
-### ✔ v11 Auto Documentation  
-Met à jour automatiquement :
-- STATE_PROJECT.md
-- HISTORY.md
-- TASKS.md  
-Avec résumé des actions automatiques.
-
-### ✔ v12 Cross Agent Matrix  
-Coordination :
-SCAN → FIX → REFACTOR → DEPLOY → CHECK  
-Hiérarchie automatique des agents.
-
----
-
-## 🔵 4. Risques Identifiés Actuellement (Predictive Engine)
-- ❗ WebApp Flutter utilise encore **fingerprint Web** (non supporté) → mobile obligatoire  
-- ❗ Certaines erreurs pourraient apparaître dans Flutter build si imports inutilisés  
-- ❗ Absence d’API backend réelle (mock actuel)
-
----
-
-## 🔵 5. Étape Actuelle
-**Mettre en place la v13 → Intelligence Autonome de Déploiement (AID)**  
-➡️ L’agent décidera automatiquement quand déployer.
-
----
-
-## 🔵 6. Étape Suivante Immédiate
-- Ajouter module v13 dans config  
-- Étendre AGENT_PROTOCOL  
-- Mise à jour STARTUP_CHECKLIST  
-
----
-
-## 🔵 7. Fiabilité Système
-| Domaine | Score |
-|---------|--------|
-| Backend | N/A (pas encore existant) |
-| Frontend Flutter | 87% |
-| Web HTML (setup) | 92% |
-| GitHub Actions | 95% |
-| Autonomie globale | 80% |
-
----
-
-## 🔵 8. Historique Version
-- v2.1 → Ajout modules v9-v12  
-- v2.2 → Stabilisation + matrices + protocoles
+## END_OF_FILE
