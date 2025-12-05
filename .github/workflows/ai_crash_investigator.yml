@@ -1,0 +1,127 @@
+name: AI Crash Investigator — Automated Root Cause Analysis
+
+on:
+  workflow_run:
+    workflows:
+      - "CI / CD — Flutter Web → Vercel"
+      - "Auto Deploy — Flutter Web → Vercel"
+      - "Post-Deploy Tests — Flutter Web on Vercel"
+      - "Sentry Integration — Error & Crash Pipeline"
+      - "Reporting Aggregator — Logs & Alerts"
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Optional workflow run id to analyze'
+        required: false
+
+env:
+  OUTPUT_DIR: /tmp/ai_crash_investigator
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  investigate:
+    name: Investigate failures and produce RCA
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r tools/ai_requirements.txt || true
+
+      - name: Prepare output dir
+        run: |
+          rm -rf $OUTPUT_DIR || true
+          mkdir -p $OUTPUT_DIR
+
+      - name: Determine target workflow run ID
+        id: findrun
+        run: |
+          # Prefer explicit input; else use triggering workflow run
+          if [ -n "${{ github.event.inputs.run_id }}" ]; then
+            echo "target_run=${{ github.event.inputs.run_id }}" >> $GITHUB_OUTPUT
+          else
+            TRIGGER_ID="${{ github.event.workflow_run.id || '' }}"
+            echo "target_run=${TRIGGER_ID}" >> $GITHUB_OUTPUT
+          fi
+          echo "target run id: ${{ steps.findrun.outputs.target_run }}"
+
+      - name: Download artifacts for target run (best-effort)
+        run: |
+          RUN_ID="${{ steps.findrun.outputs.target_run }}"
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          if [ -z "$RUN_ID" ]; then
+            echo "No run id available — will analyze local logs if any."
+            exit 0
+          fi
+          ART_API="https://api.github.com/repos/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts"
+          curl -s -H "Authorization: token $TOKEN" "$ART_API" > $OUTPUT_DIR/artifacts.json || true
+          jq -r '.artifacts[]?.archive_download_url' $OUTPUT_DIR/artifacts.json | while read -r url; do
+            if [ -n "$url" ]; then
+              echo "Downloading artifact: $url"
+              curl -sL -H "Authorization: token $TOKEN" -o $OUTPUT_DIR/artifact.zip "$url" && unzip -o $OUTPUT_DIR/artifact.zip -d $OUTPUT_DIR || true
+            fi
+          done || true
+
+      - name: Collect common logs if present
+        run: |
+          # copy known paths if present in workspace or artifacts
+          mkdir -p $OUTPUT_DIR/collected
+          for f in vercel_output.txt lint_report.md flutter_analyze.txt /tmp/resp.html deployment-check-result sync_report.md build/web/main.dart.js; do
+            if [ -f "$f" ]; then
+              cp -v "$f" $OUTPUT_DIR/collected/ || true
+            fi
+          done
+          ls -la $OUTPUT_DIR || true
+
+      - name: Run AI Crash Investigator analyzer (Python)
+        run: |
+          python tools/ai_crash_investigator.py \
+            --input-dir "$OUTPUT_DIR" \
+            --out "$OUTPUT_DIR/investigation_report.json" \
+            --summary "$OUTPUT_DIR/investigation_summary.md" || true
+
+      - name: Upload investigation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-crash-investigation
+          path: |
+            ${{ env.OUTPUT_DIR }}/investigation_summary.md
+            ${{ env.OUTPUT_DIR }}/investigation_report.json
+            ${{ env.OUTPUT_DIR }}/collected
+
+      - name: Create GitHub Issue when failure detected
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const summaryPath = '/tmp/ai_crash_investigator/investigation_summary.md';
+            let body = 'AI Crash Investigator produced an automated analysis.';
+            try {
+              if (fs.existsSync(summaryPath)) {
+                body += '\\n\\n' + fs.readFileSync(summaryPath, 'utf8');
+              }
+            } catch (e) {
+              body += '\\n\\n(Investigation summary not found)';
+            }
+            await github.rest.issues.create({
+              ...context.repo,
+              title: `🔍 Auto-RCA — ${context.payload.workflow_run?.name || 'workflow'} failure`,
+              body: body,
+              labels: ['auto-rca','investigation']
+            });
