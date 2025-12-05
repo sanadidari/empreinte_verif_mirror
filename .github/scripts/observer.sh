@@ -1,46 +1,52 @@
-#!/usr/bin/env bash
-set -euo pipefail
-WORKDIR="$(pwd)"
-DIAG_DIR=diagnostics/observer
-mkdir -p "$DIAG_DIR"
-TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
-DOMAIN=${DOMAIN:-qrpruf.sanadidari.com}
-REPORT="$DIAG_DIR/report-$TIMESTAMP.txt"
+#!/bin/bash
+# ======================================================
+#  PRODUCTION OBSERVER v8.x — Sanad Idari Project
+#  Continuous Monitoring of Deployment Health
+# ======================================================
 
-echo "Observer run $TIMESTAMP for $DOMAIN" > "$REPORT"
-# 1) HTTP check with timings
-curl -s -w "HTTP_CODE:%{http_code}\nTIME_TOTAL:%{time_total}\n" -o "$DIAG_DIR/body-$TIMESTAMP.html" "https://$DOMAIN" >> "$REPORT" || true
+DOMAIN="https://qrpruf.sanadidari.com"
+REPORT_DIR="observer_reports"
+mkdir -p "$REPORT_DIR"
 
-# 2) TLS expiry
-echo "" >> "$REPORT"
-echo "TLS info:" >> "$REPORT"
-echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" 2>/dev/null | openssl x509 -noout -dates -issuer -subject >> "$REPORT" || true
+REPORT_FILE="$REPORT_DIR/observer_$(date +%Y%m%d_%H%M).txt"
 
-# 3) quick performance metric: main.dart.js size if present
-MAINJS_URL="https://$DOMAIN/main.dart.js"
-SIZE=$(curl -sI "$MAINJS_URL" | awk '/Content-Length/ {print $2}' | tr -d '\r' || echo "unknown")
-echo "main.dart.js size: $SIZE" >> "$REPORT"
+echo "=== PRODUCTION OBSERVER REPORT v8.x ===" >> "$REPORT_FILE"
+echo "Generated at: $(date)" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
 
-# 4) create alert if HTTP code not 200 or TIME_TOTAL > 5s
-HTTP_CODE=$(grep -oP 'HTTP_CODE:\K[0-9]+' "$REPORT" || echo "000")
-TIME_TOTAL=$(grep -oP 'TIME_TOTAL:\K.*' "$REPORT" || echo "0")
-ALERT=0
-if [ "$HTTP_CODE" != "200" ]; then ALERT=1; fi
-# convert time to float compare
-TIMEF=$(printf "%.0f" $(echo "$TIME_TOTAL*1000" | bc -l))
-if [ "$TIMEF" -gt 5000 ]; then ALERT=1; fi
+# 1. HTTP Status
+STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "$DOMAIN")
+echo "HTTP Status: $STATUS" >> "$REPORT_FILE"
 
-if [ "$ALERT" -eq 1 ]; then
-  echo "ALERT triggered. Sending notification if SLACK_WEBHOOK configured." >> "$REPORT"
-  if [ -n "${SLACK_WEBHOOK:-}" ]; then
-    PAYLOAD=$(jq -n --arg text "Production observer alert for $DOMAIN\nHTTP:$HTTP_CODE TIME:$TIME_TOTAL" '{text:$text}')
-    curl -s -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK" || true
-  fi
-  # also create an issue for visibility
-  jq -n --arg t "Observer Alert: $DOMAIN $TIMESTAMP" --arg b "$(cat $REPORT)" '{title:$t, body:$b}' > "$DIAG_DIR/issue.json"
-  curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
-    https://api.github.com/repos/${GITHUB_REPOSITORY}/issues -d @"$DIAG_DIR/issue.json" || true
-fi
+# 2. Response Time
+TIME=$(curl -o /dev/null -s -w "%{time_total}\n" "$DOMAIN")
+echo "Response Time: ${TIME}s" >> "$REPORT_FILE"
 
-cp "$REPORT" "$DIAG_DIR/report-latest.txt"
-echo "Observer run saved to $REPORT"
+# 3. Check critical assets
+ASSETS=(
+  "/"
+  "/main.dart.js"
+  "/flutter_bootstrap.js"
+  "/manifest.json"
+  "/version.json"
+  "/icons/Icon-192.png"
+)
+
+echo "" >> "$REPORT_FILE"
+echo "=== ASSET CHECKS ===" >> "$REPORT_FILE"
+
+for ASSET in "${ASSETS[@]}"; do
+  CODE=$(curl -o /dev/null -s -w "%{http_code}" "$DOMAIN$ASSET")
+  echo "$ASSET → $CODE" >> "$REPORT_FILE"
+done
+
+# 4. Version fingerprint detection
+VERSION=$(curl -s "$DOMAIN/version.json" | grep -Eo '"version":[^,]+' | cut -d '"' -f4)
+echo "" >> "$REPORT_FILE"
+echo "Detected Version: ${VERSION:-UNKNOWN}" >> "$REPORT_FILE"
+
+# 5. Conclusion
+echo "" >> "$REPORT_FILE"
+echo "Observer scan complete." >> "$REPORT_FILE"
+
+echo "Production observer finished."
