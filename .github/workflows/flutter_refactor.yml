@@ -1,22 +1,41 @@
-name: Flutter Refactor — v6.0
+name: Flutter Refactor (v6.x)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 4 * * 0' # weekly
+    - cron: '0 3 * * 0'  # weekly on Sunday 03:00 UTC
+  push:
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
 
 jobs:
   refactor:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Install Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
-        with: { flutter-version: '3.27.0' }
+        with:
+          flutter-version: stable
 
-      - name: Run refactor script (analysis + suggestions)
+      - name: Ensure refactor script executable
+        run: chmod +x .github/scripts/flutter_refactor.sh
+
+      - name: Run Flutter refactor analysis
+        id: refactor
         run: |
-          chmod +x .github/scripts/flutter_refactor.sh || true
-          ./.github/scripts/flutter_refactor.sh
+          set +e
+          .github/scripts/flutter_refactor.sh
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          exit 0
+
+      - name: Upload refactor reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-refactor-reports
+          path: refactor/
