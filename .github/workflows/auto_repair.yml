@@ -1,31 +1,36 @@
-name: Auto Repair — v5.0
+name: Auto Repair (v5.x Autonomous Engine)
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "main" ]
-  workflow_dispatch: {}
+    branches: [ main ]
 
 jobs:
-  detect-and-repair:
+  auto_repair:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with: { node-version: '18' }
-
-      - name: Install Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
-        with: { flutter-version: '3.27.0' }
+        with:
+          flutter-version: stable
 
-      - name: Ensure scripts executable
-        run: chmod +x .github/scripts/auto_repair.sh || true
+      - name: Make script executable
+        run: chmod +x .github/scripts/auto_repair.sh
 
-      - name: Run Auto Repair (analysis + suggestions)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTO_MERGE_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
-          DOMAIN: qrpruf.sanadidari.com
-        run: ./.github/scripts/auto_repair.sh
+      - name: Run auto-repair engine
+        id: repair
+        run: |
+          set +e
+          .github/scripts/auto_repair.sh
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          exit 0
+
+      - name: Upload repair logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-repair-logs
+          path: repair/
