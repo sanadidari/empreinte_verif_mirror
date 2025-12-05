@@ -1,1 +1,121 @@
-﻿<PASTE THE YAML CONTENT FROM ABOVE HERE>
+name: CI / CD — Flutter Web → Vercel
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  PRODUCTION_DOMAIN: "qrpruf.sanadidari.com"
+
+jobs:
+  build_and_deploy:
+    name: Build Flutter Web & Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      - name: Enable Flutter web support
+        run: flutter config --enable-web
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        run: flutter analyze || true
+
+      - name: Run tests (if folder exists)
+        run: |
+          if [ -d "test" ]; then
+            flutter test --coverage || true
+          else
+            echo "No test folder detected — skipping tests."
+          fi
+
+      - name: Build Flutter Web (release)
+        run: flutter build web --release
+
+      - name: Show build output size
+        run: du -sh build/web || true
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25.2.0
+        id: vercel_deploy
+        with:
+          vercel-token: ${{ env.VERCEL_TOKEN }}
+          vercel-org-id: ${{ env.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: "./"
+          vercel-args: "--prod"
+          github-comment: true
+
+      - name: Wait for deployment propagation
+        run: |
+          echo "Waiting 8 seconds for Vercel deployment to propagate..."
+          sleep 8
+
+      - name: Post-deploy HTTP verification
+        env:
+          DOMAIN: ${{ env.PRODUCTION_DOMAIN }}
+        run: |
+          if [ -z "$DOMAIN" ]; then
+            echo "No PRODUCTION_DOMAIN defined — skipping verification."
+            exit 0
+          fi
+
+          echo "Checking https://$DOMAIN ..."
+          STATUS=$(curl -s -o /tmp/resp.html -w "%{http_code}" --location --max-time 20 "https://$DOMAIN" || echo "000")
+          echo "Status: $STATUS"
+
+          if [ "$STATUS" != "200" ]; then
+            echo "Invalid HTTP status: $STATUS"
+            exit 20
+          fi
+
+          SIZE=$(wc -c < /tmp/resp.html)
+          echo "Response size: $SIZE bytes"
+
+          if [ "$SIZE" -lt 100 ]; then
+            echo "Response too small — potential deployment issue."
+            exit 21
+          fi
+
+          if grep -iE "error|exception|404|not found" /tmp/resp.html; then
+            echo "Unexpected error content detected in page."
+            exit 22
+          fi
+
+          echo "✔ HTTP verification PASSED."
+
+      - name: Upload HTML response (debug artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-response
+          path: /tmp/resp.html
+
+      - name: Failure message
+        if: failure()
+        run: echo "Deployment FAILED. Check logs and vercel-response artifact."
