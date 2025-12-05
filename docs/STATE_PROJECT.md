@@ -168,4 +168,11 @@ Cohérence vérifiée
 Aucun
 
 ----------------------------------------------------------------------
-FIN DU FICHIER — STATE_PROJECT.md v2.0
+2025-12-05 — v5–v8 deployment
+- v5.0 Auto-Repair workflow added (.github/workflows/auto_repair.yml)
+- v6.0 Flutter Refactor (analysis + suggestions)
+- v7.0 UI Analysis (screenshots diffs)
+- v8.0 Production Observer (15m checks + alerts)
+
+----------------------------------------------------------------------
+FIN DU FICHIER — STATE_PROJECT.md

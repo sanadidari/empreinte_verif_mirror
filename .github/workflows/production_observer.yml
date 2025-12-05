@@ -1,0 +1,20 @@
+name: Production Observer — v8.0
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes
+  workflow_dispatch: {}
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run observer
+        env:
+          DOMAIN: qrpruf.sanadidari.com
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          chmod +x .github/scripts/observer.sh || true
+          ./.github/scripts/observer.sh

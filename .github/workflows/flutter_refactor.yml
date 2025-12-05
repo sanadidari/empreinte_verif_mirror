@@ -1,0 +1,22 @@
+name: Flutter Refactor — v6.0
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 0' # weekly
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.27.0' }
+
+      - name: Run refactor script (analysis + suggestions)
+        run: |
+          chmod +x .github/scripts/flutter_refactor.sh || true
+          ./.github/scripts/flutter_refactor.sh

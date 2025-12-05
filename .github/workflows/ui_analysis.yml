@@ -1,0 +1,27 @@
+name: UI Analysis — v7.0
+
+on:
+  workflow_dispatch:
+    inputs:
+      image-path:
+        description: 'Path to screenshot in repo or URL (optional)'
+        required: false
+
+jobs:
+  ui-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Install ImageMagick & compare tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick libmagickcore-dev
+
+      - name: Run UI analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x .github/scripts/ui_analyze.sh || true
+          ./.github/scripts/ui_analyze.sh "${{ github.event.inputs.image-path || '' }}"
