@@ -1,107 +1,122 @@
-## TASKS.md — MISSION TASK MATRIX (MTM-2)
-Projet : empreinte_verif
-Classification : OPÉRATIONNEL — STRICT — ZERO-ERROR
+## TASKS.md — MISSION TASK MATRIX (MTM-1)
+Projet : empreinte_verif  
+Classification : OPÉRATIONNEL / STRICT / ZERO-ERROR
+
+Ce fichier définit toutes les tâches du projet, réparties en quatre états :
+TERMINÉ, EN COURS, À FAIRE, BLOQUÉ.
+
+Aucune tâche ne peut être inventée.  
+Un agent GPT ne doit manipuler que ce qui est écrit ici.
 
 ----------------------------------------------------------------------
 1. TERMINÉ — Missions accomplies
 
-INFRASTRUCTURE & DNS
-  - Migration HostPapa → Vercel
-  - Configuration DNS complète
-  - Activation SSL
-  - Routage SPA corrigé
+🔧 Infrastructure & Migration
+- Abandon HostPapa  
+- Migration complète vers Vercel  
+- Configuration DNS → HostPapa → Vercel  
+- Activation SSL  
+- Routage SPA corrigé (vercel.json)
 
-FLUTTER & UI
-  - Build Flutter Web validé
-  - Page blanche corrigée
-  - Responsive testé et validé
+🛠 Flutter & Front-End
+- Build Flutter Web validé  
+- Page blanche corrigée  
+- Test responsive validé
 
-DOCUMENTATION
-  - Création du dossier /docs
-  - Passage complet en PRO MODE
-  - Documentation militaire réécrite
+📚 Documentation
+- Création du système documentaire /docs  
+- Passage en PRO MODE agents GPT  
+- Réécriture totale en mode MILITAIRE  
+- Documentation v2.0 déployée  
+- Purge complète ancienne documentation  
+- STANDARDISATION finale : 12 fichiers militaires PRO
 
-CI/CD & SÉCURITÉ
-  - Installation build_web.yml
-  - Installation mirror.yml
-  - Création MIRROR_DEPLOY_KEY
-  - Création VERCEL_TOKEN
-  - Miroir public opérationnel
+🔐 CI/CD & Sécurité
+- Installation workflow build_web.yml  
+- Installation workflow mirror.yml  
+- Création clé SSH pour miroir  
+- Création secret MIRROR_DEPLOY_KEY  
+- Création secret VERCEL_TOKEN  
+- Miroir public opérationnel  
+- Synchronisation repo privé → miroir validée
+
+🟦 Agents & Protocole
+- Mise à jour AGENT_START.md vers version auto-boot v2.0  
+  (message de démarrage militaire, SCANS automatiques,  
+   génération du rapport Level Red)  
+  Résultat :  
+  ✔ Agents démarrent en protocole strict automatiquement  
+  ✔ Plus aucune demande manuelle de fichiers /docs
 
 ----------------------------------------------------------------------
 2. EN COURS — Missions actives
 
-DÉPLOIEMENT AUTOMATIQUE FLUTTER WEB → VERCEL  
-Cette mission correspond EXACTEMENT à la NEXT ACTION militaire.
+🚀 Déploiement automatique Flutter Web → Vercel  
+Tâches opérationnelles :  
+- Vérifier CI/CD (build_web.yml)  
+- Vérifier Vercel deploy  
+- Tester domaine final  
+- Inspecter logs Vercel  
+- Mettre à jour documentation  
 
-Actions militaires :
-  - vérifier CI/CD (build_web.yml)
-  - vérifier déploiement Vercel
-  - analyser logs de build
-  - tester domaine final
-  - mettre à jour documentation
-
-Une seule action peut avancer à la fois.
+⚠ Cette mission correspond EXACTEMENT à la NEXT ACTION officielle.
 
 ----------------------------------------------------------------------
 3. À FAIRE — Missions programmées
 
-API BACKEND — PHASE 2
-  - créer endpoint /scan
-  - recevoir empreinte base64
-  - renvoyer réponse JSON
-  - sécuriser via token
+🟩 API Backend (Phase 2)
+- Construire endpoint /scan  
+- Recevoir empreinte en base64  
+- Analyse et réponse JSON  
+- Sécurisation Token
 
-INTÉGRATION API FLUTTER — PHASE 3
-  - appel HTTP depuis Flutter
-  - affichage résultat
-  - gestion erreurs
+🟩 Intégration API Flutter (Phase 3)
+- Appeler API depuis Flutter  
+- Afficher résultat  
+- Gestion erreurs
 
-DÉVELOPPEMENT MOBILE — PHASE 4
-  - permissions biométriques Android
-  - test hardware fingerprint
-  - UI mobile dédiée
+🟦 Développement Mobile (Phase 4)
+- Permissions empreinte Android  
+- Tests matériel fingerprint  
+- UI mobile dédiée
 
-OPTIMISATIONS — PHASE 5
-  - sécurité
-  - performance
-  - compression assets
-  - SEO Web
-  - logs système
+🟧 Optimisations (Phase 5)
+- Sécurité  
+- Performance Flutter Web  
+- Compression assets  
+- SEO Web  
+- Logs système
 
-INFRASTRUCTURE OPTIONNELLE
-  - versioning releases
-  - mode maintenance
-  - rollback automatique
-  - notifications Discord
+🟪 Infrastructure (Optionnel)
+- Versioning Releases  
+- Mode Maintenance  
+- Rollback automatique  
+- Notifications Discord
 
 ----------------------------------------------------------------------
-4. BLOQUÉ — Missions en attente
+4. BLOQUÉ — En attente ou impossible
 
 Aucune mission bloquée actuellement.
 
-Si un agent détecte :
-  - clé manquante
-  - workflow cassé
-  - repo inaccessible
-  → il doit ajouter la mission ici immédiatement.
+Si un agent détecte un blocage (clé manquante, workflow cassé,
+repo inaccessible), il doit l’ajouter immédiatement ici.
 
 ----------------------------------------------------------------------
 5. RÈGLES STRICTES DE MISE À JOUR
 
-Toute mise à jour doit être accompagnée d’une mise à jour de :
-  - STATE_PROJECT.md
-  - HISTORY.md (optionnel)
+Chaque modification doit être accompagnée de :
 
-Commandes officielles :
+Commandes :
   git add .
   git commit -m "update tasks: <description>"
   git push
 
-Interdit :
-  - inventer une tâche
-  - marquer une tâche terminée sans succès réel
-  - ignorer la NEXT ACTION militaire
+Et mise à jour simultanée des fichiers :
+- STATE_PROJECT.md  
+- HISTORY.md (optionnel)  
+- Le fichier modifié
+
+Aucune tâche ne peut être déplacée sans succès vérifié.
 
 ----------------------------------------------------------------------
-FIN DU FICHIER — TASKS.md v2.0 (FORMAT 80 COLONNES)
+FIN DU FICHIER — TASKS.md v2.0
