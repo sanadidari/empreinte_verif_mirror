@@ -1,124 +1,149 @@
-## AGENT_PROTOCOL.md — PROTOCOLE MILITAIRE V2.1
+## AGENT_PROTOCOL.md — PROTOCOLE MILITAIRE v3.0
 Projet : empreinte_verif
 Classification : STRICT — ZERO-ERROR — CLASSIFIÉ
 
-Ce protocole définit les règles absolues que tout agent GPT doit suivre
-avant toute action sur ce projet. Aucune improvisation n’est autorisée.
+Ce protocole définit les règles absolues que tout agent GPT appliquera
+immédiatement au démarrage d'une session. Objectif : autonomie maximale
+pour l'analyse, la détection et la prévention d'erreurs — l'humain reste
+responsable des vérifications visuelles et des commits finaux.
 
 ----------------------------------------------------------------------
 0. OBJECTIF
 
-Assurer que chaque agent :
-  - lit la documentation officielle
-  - exécute les SCANS obligatoires
-  - réalise automatiquement un SCAN HTTP sur le domaine Vercel
-  - respecte NEXT_ACTION
-  - exécute 1 seule action à la fois
-  - attend validation utilisateur
-  - ne travaille jamais hors protocole
+Chaque agent doit :
+  - charger le miroir public automatiquement
+  - lire /docs dans l'ordre militaire
+  - exécuter une suite complète de SCANS automatiques :
+      • Git (repo privé + miroir)
+      • Docs (cohérence)
+      • Infra (CI/CD, Vercel, DNS)
+      • Domaine (HTTP/SSL/redirections)
+      • Code (FULL CODE INTELLIGENCE)
+      • Diff / sécurité / prédictif
+  - produire rapports structurés
+  - proposer corrections et PRs draft si autorisé
+  - EXÉCUTER seulement après validation humaine les actions mutantes
 
 ----------------------------------------------------------------------
-1. SCANS OBLIGATOIRES AVANT TOUTE RÉPONSE
+1. SCANS OBLIGATOIRES (Séquence automatique)
 
-1.1 SCAN — Accès repo privé  
-  URL : https://github.com/sanadidari/empreinte_verif  
-  Vérifier :
-    - accès OK/NON
-    - RAW accessible
-    - dossiers : /docs, /lib, /web, /android, /ios
-    - workflows présents
-  Si échec → demander solution.
+1.1 SCAN GIT (privé)
+  - Vérifier accès, derniers commits, état branche main.
+  - Hash privé, hash miroir, différence.
 
-1.2 SCAN — Accès repo miroir (SOURCE UNIQUE)  
-  URL : https://github.com/sanadidari/empreinte_verif_mirror  
-  Vérifier :
-    - accessibilité
-    - dossiers /docs présents
-    - cohérence commits
-    - hash privé vs miroir
+1.2 SCAN MIROIR (source de lecture)
+  - Vérifier accessibilité miroir public.
+  - Vérifier présence /docs et fichiers obligatoires.
 
-1.3 SCAN — Lecture obligatoire /docs  
-Ordre strict :
-  1. AGENT_PROTOCOL.md
-  2. STARTUP_CHECKLIST.md
-  3. NEXT_ACTION.md
-  4. STATE_PROJECT.md
-  5. RULES.md
-  6. ARCHITECTURE.md
-  7. HISTORY.md
-  8. DEPLOY_GUIDE.md
-  9. TASKS.md
- 10. CHECKLIST_MASTER.md (si présent)
+1.3 SCAN DOCS (lecture obligatoire)
+  Ordre strict :
+    AGENT_PROTOCOL.md
+    STARTUP_CHECKLIST.md
+    NEXT_ACTION.md
+    STATE_PROJECT.md
+    RULES.md
+    ARCHITECTURE.md
+    HISTORY.md
+    DEPLOY_GUIDE.md
+    TASKS.md
+    CHECKLIST_MASTER.md (si présent)
 
-1.4 SCAN — Vérification branche main  
-  - dernier commit repo privé  
-  - dernier commit miroir  
-  - statut SYNC / OUTDATED
+1.4 SCAN CI/CD
+  - Vérifier build_web.yml, mirror.yml.
+  - Vérifier install Flutter step, commandes build, vercel CLI usage.
+  - Analyser risques de fail (dépendances manquantes, version Flutter).
 
-1.5 SCAN — Lecture NEXT_ACTION.md  
-  - extraire la prochaine action  
-  - ne pas inventer
+1.5 SCAN DOMAINE (HTTP/SSL) — AUTOMATIQUE
+  - Tester : HTTP status, redirections, SSL cert validity, WWW vs apex.
+  - Test de fallback SPA (index.html fallback status).
+  - Rapporter anomalies (timeouts, 4xx, 5xx, redirect loops).
 
-1.6 SCAN — Vérification GitHub Actions  
-  Vérifier :
-    - build_web.yml présent
-    - mirror.yml présent
-    - secrets opérationnels
+1.6 SCAN CODE — FULL CODE INTELLIGENCE (FCI) — OBLIGATOIRE
+  L'agent analyse automatiquement :
+    - structure du projet (lib/, web/, assets/)
+    - pubspec.yaml (dépendances, versions)
+    - main.dart et routes critiques
+    - imports cassés ou orphelins
+    - usages non-web compatibles (dart:io, platform channels non gérés)
+    - assets référencés mais non présents
+    - patterns anti-perf (rebuilds excessifs, widgets lourds)
+    - appels asynchrones non awaités potentiellement dangereux
+    - usages non sécurisés d'APIs externes
+  L'agent produit :
+    - liste d'anomalies classée par SEVERITY
+    - suggestions de correction (patch snippets)
+    - estimation de risque (probabilité d'échec build/release)
 
-1.7 SCAN AUTOMATISÉ — Domaine Vercel (OBLIGATOIRE)  
-L’agent doit automatiquement analyser :  
-  - accessibilité HTTP  
-  - certificat SSL  
-  - redirections (200 / 301 / 308 / 404 / 500)  
-  - réponse du CDN  
-  - cohérence domaine principal / www  
-Aucune confirmation utilisateur requise.
+1.7 SCAN INFRASTRUCTURE AVANCÉ
+  - Vérification vercel.json (fallback, routes)
+  - Vérification secrets GitHub (noms & existence)
+  - Vérification clé MIRROR_DEPLOY_KEY write access
+  - Vérification CNAME / DNS propagation (via public DNS checks)
+  - Estimation de délai de propagation si nécessaire
 
-Domaine(s) :  
-  https://qrpruf.sanadidari.com  
-  https://www.qrpruf.sanadidari.com  
+1.8 SCAN DIFF / IDS (Smart Diff)
+  - Comparer dernier commit vs baseline (dernière version vérifiée)
+  - Détecter suppressions massives, fichiers binaires ajoutés, clé exposée
+  - Marquer modifications suspectes et alerter
+
+1.9 SCAN PRÉDICTIF
+  - Sur la base du code + historique, estimer probabilité d'échec build
+  - Identifier lignes/commits les plus risqués
+  - Proposer tests additionnels à exécuter
 
 ----------------------------------------------------------------------
 2. RAPPORT INITIAL — FORMAT OBLIGATOIRE
 
-L’agent doit produire EXACTEMENT :
+Après tous les SCANS, l'agent produit EXACTEMENT :
 
 [PROTOCOL INITIAL REPORT – LEVEL RED]
 
-1. Private repo access: OK/NON  
-2. Mirror repo access: OK/NON  
-3. Docs loaded: <liste>  
-4. Last commit (private): <hash>  
-5. Last commit (mirror): <hash>  
-6. Sync status: SYNC / OUTDATED  
-7. NEXT ACTION: <contenu>  
-8. Domain scan: <résultat automatique>
+1. Private repo access: <OK/NON>
+2. Mirror repo access: <OK/NON>
+3. Docs loaded: <liste>
+4. Last commit (private): <hash>
+5. Last commit (mirror): <hash>
+6. Sync status: <SYNC / OUTDATED>
+7. NEXT ACTION: <contenu exact>
+8. Domain scan: <OK / WARN / FAIL> + summary
+9. Code intelligence: <OK / WARN / FAIL> + key findings
+10. Infra summary: <OK / WARN / FAIL>
 
 QUESTION: Souhaites-tu valider l’exécution de l’étape 1 ?
 
-STOP.
+L’agent DOIT STOPPER ensuite et attendre validation humaine.
 
 ----------------------------------------------------------------------
-3. RÈGLE D’OR — UNE SEULE ACTION PAR ÉTAPE
+3. ACTIONS PRATIQUES ET LIMITES
 
-Cycle :
-  - validation  
-  - exécution  
-  - fichier complet  
-  - commandes git  
-  - mise à jour docs  
-STOP.
+- L'agent PEUT proposer patches, PR drafts et scripts de correction.
+- L'agent NE PEUT PAS exécuter de builds ni de commandes sur ton poste.
+- L'agent NE DOIT PAS pousser des modifications mutantes sans validation.
+- Pour tout fix visuel ou runtime, l'agent demandera captures d'écran & logs.
 
 ----------------------------------------------------------------------
-4. INTERDICTIONS ABSOLUES
+4. AUTONOMIE ÉTENDUE (Règles v3.0)
 
-❌ inventer un fichier  
-❌ inventer une action  
-❌ modifier sans validation  
-❌ modifier plusieurs fichiers  
-❌ ignorer le SCAN AUTOMATISÉ  
-❌ modifier build/web  
-❌ ignorer NEXT_ACTION
+- Exécution automatique de l'ensemble des SCANS en entrée de session.
+- Analyse complète du code et infra sans demande préalable.
+- Notification synthétique à l'humain (toi) des anomalies critiques.
+- Propositions de corrections en PR draft (optionnel) — à activer par toi.
+- Conservation d'un historique des recommandations (HISTORY.md update).
 
 ----------------------------------------------------------------------
-FIN DU FICHIER — AGENT_PROTOCOL.md v2.1
+5. INTERDICTIONS ABSOLUES
+
+❌ Exposer clé privée ou secrets
+❌ Pousser modifications sans validation humaine
+❌ Modifier build/web
+❌ Ignorer les captures visuelles quand requises
+❌ Remplacer NEXT_ACTION sans approbation
+
+----------------------------------------------------------------------
+6. MISE EN SÉCURITÉ & AUDIT
+
+- L'agent conserve un log interne (audit) des alertes importantes.
+- Tout changement majeur entraîne une entrée HISTORY.md (draft).
+
+----------------------------------------------------------------------
+FIN DU FICHIER — AGENT_PROTOCOL.md v3.0 (FULL INTELLIGENCE)

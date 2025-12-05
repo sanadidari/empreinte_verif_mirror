@@ -1,90 +1,109 @@
-## STARTUP_CHECKLIST.md — STARTUP PROTOCOL v2.1
-Projet : empreinte_verif — Agents GPT — Strict Military Mode
+## STARTUP_CHECKLIST.md — STARTUP PROTOCOL v3.0
+Projet : empreinte_verif — Agents GPT — Full Intelligence
 
-Cette checklist définit les actions obligatoires, dans l’ordre, qu’un
-agent GPT doit effectuer avant toute réponse.
-
-----------------------------------------------------------------------
-1. VÉRIFICATION ACCÈS GITHUB
-
-1.1 Repo privé  
-  - accès repo  
-  - RAW  
-  - dossiers /docs /lib /web  
-  - workflows  
-  - dernier commit  
-
-1.2 Repo miroir public  
-  - accessibilité  
-  - cohérence commits  
-  - statut SYNC
+Cette checklist ordonne la séquence automatique que chaque agent exécute
+au démarrage. L'humain reste opérateur visuel et valide les actions mutantes.
 
 ----------------------------------------------------------------------
-2. LECTURE OBLIGATOIRE DES DOCUMENTS
+1. VÉRIFICATION ACCÈS GIT
 
-Ordre strict :
-  AGENT_PROTOCOL.md  
-  STARTUP_CHECKLIST.md  
-  NEXT_ACTION.md  
-  STATE_PROJECT.md  
-  RULES.md  
-  ARCHITECTURE.md  
-  HISTORY.md  
-  DEPLOY_GUIDE.md  
-  TASKS.md  
+1.1 Repo privé
+  - URL : https://github.com/sanadidari/empreinte_verif
+  - Vérifier accès, RAW, /docs, /lib, /web
+  - Récupérer dernier commit hash
+
+1.2 Repo miroir public
+  - URL : https://github.com/sanadidari/empreinte_verif_mirror
+  - Vérifier accessibilité & hash miroir
 
 ----------------------------------------------------------------------
-3. VÉRIFICATION STRUCTURE PROJET  
-/pubspec.yaml, /lib, /web, /android, /ios  
-/github/workflows : build_web.yml, mirror.yml
+2. CHARGEMENT /docs (Ordre strict)
+  1. AGENT_PROTOCOL.md
+  2. STARTUP_CHECKLIST.md
+  3. NEXT_ACTION.md
+  4. STATE_PROJECT.md
+  5. RULES.md
+  6. ARCHITECTURE.md
+  7. HISTORY.md
+  8. DEPLOY_GUIDE.md
+  9. TASKS.md
+ 10. CHECKLIST_MASTER.md (si présent)
 
 ----------------------------------------------------------------------
-4. VÉRIFICATION SECRETS  
-MIRROR_DEPLOY_KEY  
-VERCEL_TOKEN
+3. VÉRIFICATION STRUCTURE PROJET
+
+- pubspec.yaml exists
+- /lib non vide
+- /web includes index.html + flutter_bootstrap.js
+- .github/workflows includes build_web.yml & mirror.yml
 
 ----------------------------------------------------------------------
-5. VÉRIFICATION CI/CD  
-build_web.yml  
-mirror.yml  
-commandes Flutter  
-output build/web
+4. VÉRIFICATION SECRETS
+
+- VERCEL_TOKEN exists
+- MIRROR_DEPLOY_KEY exists
+- Aucun secret ne doit être committé
 
 ----------------------------------------------------------------------
-6. ANALYSE NEXT_ACTION.md  
-Extraire la prochaine action.  
-Ne rien inventer.
+5. SCANS AUTOMATIQUES (exécutés sans demander)
+
+5.1 Scan CI/CD
+  - parse build_web.yml ; valider commandes
+  - détecter mismatch flutter version
+
+5.2 Scan DOMAINE (HTTP/SSL)
+  - tester qrpruf.sanadidari.com & www
+  - status code, redirect chain, cert validity
+  - fallback index.html check (http status /headers)
+
+5.3 Scan CODE (FCI)
+  - analyser main.dart, routing, imports, assets refs
+  - détecter patterns non-web
+  - lister anomalies + patch suggestions
+
+5.4 Scan INFRA
+  - vercel.json routes
+  - DNS CNAME presence
+  - secrets names & existence
+
+5.5 Scan DIFF
+  - comparer avec baseline (dernier état validé)
+  - alertes sur suppressions/ajouts suspects
 
 ----------------------------------------------------------------------
-7. SCAN AUTOMATISÉ DU DOMAINE VERCEL (OBLIGATOIRE)
-L’agent doit analyser automatiquement :  
-  - HTTP response  
-  - SSL  
-  - redirections  
-  - erreurs CDN  
-  - cohérence domaine / www  
+6. RAPPORT AUTOMATISÉ
 
-Domaine :  
-https://qrpruf.sanadidari.com
+L'agent produit :
+  - [STARTUP CHECK COMPLETE] (format structuré)
+  - inclut Domain scan & Code intelligence summary
+  - enregistre un brouillon dans HISTORY.md (draft) si anomalies
 
-Aucune autorisation requise.
-
-----------------------------------------------------------------------
-8. RAPPORT INITIAL  
-L’agent doit produire :
-
-[STARTUP CHECK COMPLETE]
-
-1. Repo privé: OK/NON  
-2. Repo miroir: OK/NON  
-3. Docs chargés: <liste>  
-4. Dernier commit privé: <hash>  
-5. Dernier commit miroir: <hash>  
-6. Sync status: <SYNC/OUTDATED>  
-7. NEXT ACTION: <contenu>  
-8. Domain scan: <résultat>  
-
-Puis STOP.
+Format :
+  1. Repo privé: OK/NON
+  2. Repo miroir: OK/NON
+  3. Docs chargés: <liste>
+  4. Dernier commit privé: <hash>
+  5. Dernier commit miroir: <hash>
+  6. Sync status: SYNC/OUTDATED
+  7. NEXT ACTION: <contenu>
+  8. Domain scan: <OK/WARN/FAIL>
+  9. Code intelligence: <OK/WARN/FAIL>
 
 ----------------------------------------------------------------------
-FIN DU FICHIER — STARTUP_CHECKLIST.md v2.1
+7. ACTIONS POST-SCAN
+
+- Si Code intelligence = OK → l'agent propose d'exécuter NEXT_ACTION
+  (doit attendre ta validation)
+- Si anomalies critiques → l'agent propose patches et demandes visuelles
+- Si anomalies infra/domaine → l'agent propose actions mitigantes
+
+----------------------------------------------------------------------
+8. RÔLE HUMAIN
+
+Tu fournis :
+  - captures d'écran console & network
+  - validations pour commits mutatifs
+  - exécution des commandes git locales (push)
+
+----------------------------------------------------------------------
+FIN DU FICHIER — STARTUP_CHECKLIST.md v3.0

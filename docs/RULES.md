@@ -1,63 +1,86 @@
-## RULES.md — MILITARY OPERATING RULES (MOR-1)
+## RULES.md — MILITARY OPERATING RULES v3.0
 Projet : empreinte_verif
-Classification : STRICT | ZERO-ERROR | NON-NÉGOCIABLE
+Classification : STRICT | ZERO-ERROR | FULL INTELLIGENCE
 
 ----------------------------------------------------------------------
-1. RÈGLE D’OR — PRO MODE STRICT
+1. RÈGLE D'OR — PRO MODE MAX
 
-Les agents doivent :  
-  - analyser le miroir  
-  - lire la documentation  
-  - exécuter les SCANS  
-  - effectuer un SCAN AUTOMATISÉ du domaine  
-  - ne jamais inventer  
-  - ne jamais ignorer NEXT_ACTION
-
-----------------------------------------------------------------------
-2. ACCÈS GITHUB — LOI ABSOLUE  
-Repo privé + miroir doivent être vérifiés avant toute action.
+Chaque agent doit :
+  - démarrer en auto-boot
+  - exécuter tous les SCANS automatiques (Git, Docs, Infra, Domaine,
+    Code, Diff, Prédictif)
+  - produire rapports précis
+  - proposer corrections et PR drafts (optionnel)
+  - attendre validation humaine pour toute action mutante
 
 ----------------------------------------------------------------------
-3. RÉGIME DE TRAVAIL — UNE SEULE ACTION PAR ÉTAPE  
-Validation → Exécution → Fichier complet → Git → STOP.
+2. ACCÈS GITHUB & MIROIR
+
+- L'agent lit le miroir public comme source d'information.
+- L'agent vérifie hash privé vs miroir.
+- Si miroir OUTDATED → alerter et demander intervention.
 
 ----------------------------------------------------------------------
-4. LECTURE OBLIGATOIRE DES DOCS  
-Ordre strict (10 fichiers maximum).
+3. DÉCISIONS & ACTIONS
+
+- L'agent PEUT :
+  - analyser et proposer corrections
+  - créer PR drafts (local draft file) sur demande
+  - générer patches textuels et snippets
+- L'agent NE PEUT PAS :
+  - exécuter builds localement
+  - pousser modifications sans validation humaine
+  - exposer secrets
 
 ----------------------------------------------------------------------
-5. VÉRIFICATIONS OBLIGATOIRES  
-Structure Flutter  
-Workflows GitHub  
-Secrets  
-vercel.json  
+4. SCAN LOGICIEL (FCI) — RÈGLE FORTE
+
+- L'agent exécute FCI automatiquement.
+- Il classe les problèmes par SEVERITY (CRITICAL / HIGH / MEDIUM / LOW).
+- Pour CRITICAL → arrêt & alerte humaine immédiate.
+- Pour HIGH → proposer patch, recommander test manuel.
+- Pour MEDIUM/LOW → consigner et proposer amélioration.
 
 ----------------------------------------------------------------------
-6. SCAN AUTOMATISÉ — RÈGLE PERMANENTE (NOUVEAU)
+5. SCAN INFRA & DOMAINE
 
-Avant toute réponse technique, l’agent doit automatiquement exécuter :
-
-- Analyse HTTP du domaine  
-- Vérification SSL  
-- Vérification redirections  
-- Détection erreurs CDN Vercel  
-- Comparaison domaine / www  
-
-Domaine(s) :  
-https://qrpruf.sanadidari.com  
-https://www.qrpruf.sanadidari.com  
-
-Aucune confirmation utilisateur n’est requise.  
-Le SCAN AUTOMATISÉ est MANDATORY.
+- Analyse vercel.json, DNS, SSL et CI workflows.
+- Si erreur SSL/CNAME/redirects → alerte critique.
+- Agent propose étapes mitigantes automatisées (docs + commands).
 
 ----------------------------------------------------------------------
-7. INTERDICTIONS ABSOLUES  
-❌ ignorer SCAN AUTOMATISÉ  
-❌ inventer une action  
-❌ agir sans validation  
-❌ modifier plusieurs fichiers  
-❌ contourner NEXT_ACTION  
-❌ ignorer les repos GitHub  
+6. SCAN DIFF & SÉCURITÉ
+
+- L'agent effectue un Smart Diff à l'entrée de session.
+- Détecte suppression massive, ajout binaire suspect, exposé secret.
+- Toute détection majeure → LOCK / ALERT.
 
 ----------------------------------------------------------------------
-FIN DU FICHIER — RULES.md v2.1
+7. RAPPORTING & AUDIT
+
+- Chaque session génère un résumé (Level Red Report).
+- Les recommandations sont historisées dans HISTORY.md (draft).
+- Les modifications proposées incluent :
+  - patch snippet
+  - commande git à exécuter localement
+  - bullet points d'urgence
+
+----------------------------------------------------------------------
+8. RÈGLES HUMAIN-AGENT
+
+- L'humain : opérateur visuel & validateur final.
+- L'agent : analyste, proposeur, prédicteur.
+- L'humain fournit logs visuels (console / network / screenshots)
+  quand l'agent le demande.
+
+----------------------------------------------------------------------
+9. INTERDICTIONS ABSOLUES
+
+❌ Pousser secrets
+❌ Pousser fixes sans validation
+❌ Modifier build/web
+❌ Ignorer les scans FCI
+❌ Agir contre la décision humaine
+
+----------------------------------------------------------------------
+FIN DU FICHIER — RULES.md v3.0 (FULL INTELLIGENCE)
