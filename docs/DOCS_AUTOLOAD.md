@@ -1,30 +1,38 @@
-# DOCS_AUTOLOAD.md — MILITARY PRO EDITION v1.0
+# DOCS_AUTOLOAD.md — MILITARY PRO EDITION v1.1
 AUTOLOAD_MODE: enabled
-VERSION: 1.0
+VERSION: 1.1
 
 # INSTRUCTIONS
-This single file bundles the entire /docs directory for the project `empreinte_verif`.
-Use this file as the only input to ChatGPT at the start of a session to load the full project documentation and configuration.
+This file bundles the full documentation for the project `empreinte_verif`.
+At the start of every session, an agent must load this file FIRST to acquire:
+- The full system vision
+- The protocol military rules
+- The current NEXT_ACTION
+- The global architecture
+- The entire documentation dataset
 
 FILES:
+
   DOCS_MANIFEST.yaml: |
-    # DOCS_MANIFEST.yaml
-    manifest_version: 1.0
+    manifest_version: 1.1
     project: empreinte_verif
     repo_private: https://github.com/sanadidari/empreinte_verif
     repo_mirror:  https://github.com/sanadidari/empreinte_verif_mirror
     root_docs_path: /docs
+
     watch_files:
       - AGENT_START.md
       - NEXT_ACTION.md
       - STATE_PROJECT.md
       - TASKS.md
       - AGENT_PROTOCOL.md
+      - VISION_STRATEGIQUE.md     # ← ADDED
 
     scan_order:
       - load_manifest
       - load_agent_start
       - load_next_action
+      - load_vision_strategique   # ← ADDED
       - load_state_project
       - load_tasks
       - load_agent_protocol
@@ -43,95 +51,71 @@ FILES:
     scan_interval_minutes: 0
     auto_sync: true
     notes: |
-      This manifest is authoritative for autonomous scanning.
+      Manifest used for autonomous scanning.
       NEXT_ACTION.md is blocking when status=BLOCKING.
 
   AGENT_START.md: |
     ## AGENT_START.md — MILITARY AUTO-BOOT SEQUENCE v2.0
-    Projet : empreinte_verif
-    Classification : STRICT / ZERO-ERROR / TOP-LEVEL
+    (… ton contenu actuel exact …)
 
-    (… contenu complet exact …)
+  VISION_STRATEGIQUE.md: |
+    # VISION_STRATEGIQUE.md — MASTER VISION FILE
+    Projet : empreinte_verif
+    Classification : STRATEGIC / HIGH-LEVEL / ZERO-ERROR
+    Version : 1.0 — Phase 1 (Biométrie)
+
+    ## 1. VISION GLOBALE
+    (… contenu complet de la vision stratégique ici …)
 
   NEXT_ACTION.md: |
-    # NEXT_ACTION.md — PROTOCOL TASK ORDER (PTO-1)
-    Projet : empreinte_verif — Niveau : TOP PRIORITY — Zero-Error
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   STATE_PROJECT.md: |
-    # STATE_PROJECT.md — PROJECT STATUS INTEL REPORT (v2.4)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   RULES.md: |
-    # RULES.md — MILITARY OPERATING RULES (MOR-1) — v3.0
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   TASKS.md: |
-    ## TASKS — Mise à jour v12
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   AGENT_PROTOCOL.md: |
-    # AGENT_PROTOCOL.md — PROTOCOL MILITAIRE V3.0
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   ARCHITECTURE.md: |
-    ## ARCHITECTURE.md — SYSTEM ARCHITECTURE DOSSIER (SAD-2)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   STARTUP_CHECKLIST.md: |
-    # STARTUP_CHECKLIST.md — STARTUP PROTOCOL v1.1
-    (… contenu complet exact …)
-
-# PARTIE 2 — SUITE DU FICHIER AUTOLOAD
+    (… ton fichier exact …)
 
   CHECKLIST_MASTER.md: |
-    ## CHECKLIST_MASTER.md — MASTER CONTROL CHECKLIST (MCC-1)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   DEPLOY_GUIDE.md: |
-    ## DEPLOY_GUIDE.md — VERCEL DEPLOYMENT DOSSIER (VDD-2.1)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   HISTORY.md: |
-    ## HISTORY.md — OPERATIONAL HISTORY DOSSIER (OHD-2)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   MIRROR_SETUP.md: |
-    ## MIRROR_SETUP.md — GITHUB MIRROR DOSSIER (GMD-1)
-    (… contenu complet exact …)
+    (… ton fichier exact …)
 
   ROOT_CAUSE_DB.json: |
-    {
-      "incidents": []
-    }
+    {"incidents": []}
 
   ROOT_CAUSE_CORRELATIONS.json: |
-    {
-      "clusters": []
-    }
+    {"clusters": []}
 
 # INDEX
-- Files included:
-  DOCS_MANIFEST.yaml,
-  AGENT_START.md,
-  NEXT_ACTION.md,
-  STATE_PROJECT.md,
-  RULES.md,
-  TASKS.md,
-  AGENT_PROTOCOL.md,
-  ARCHITECTURE.md,
-  STARTUP_CHECKLIST.md,
-  CHECKLIST_MASTER.md,
-  DEPLOY_GUIDE.md,
-  HISTORY.md,
-  MIRROR_SETUP.md,
-  ROOT_CAUSE_DB.json,
-  ROOT_CAUSE_CORRELATIONS.json
+- manifest
+- agent_start
+- vision_strategique
+- next_action
+- rules
+- tasks
+- architecture
+- history
+- checklists
+- mirror_setup
 
-# USAGE
-1. Paste the entire contents (Part 1 + Part 2) into ChatGPT at session start.
-2. Or commit as /docs/DOCS_AUTOLOAD.md in GitHub mirror.
-
-# METADATA
-generated_by: assistant
-version: military-pro-1.0
+# END OF FILE — DOCS_AUTOLOAD.md v1.1
