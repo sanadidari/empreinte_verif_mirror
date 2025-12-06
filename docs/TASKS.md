@@ -71,6 +71,32 @@ Dans `lib/services/` :
 | Backend | ⏳ Décision requise |
 | Icone appli | ⏳ En attente |
 
+# TASKS.md — Mission Taskboard v13
+
+## ✔ TERMINÉ
+- Mise en place miroir GitHub
+- Migration Vercel
+- Documentation militaire unifiée
+- TITAN / OMEGA / MATRIX initialisés
+
+## 🟥 PHASE ACTIVE — BIOMÉTRIE (v13)
+1. Tester fingerprint Android localement  
+2. Valider installation APK  
+3. Capturer erreurs runtime  
+4. Stabiliser service biométrique  
+5. Intégrer la page de test dans HomeView  
+6. Vérifier permissions Android  
+7. Préparer migration vers LOGIN_VIEW
+
+## 🟦 PHASE SUIVANTE — RECONNAISSANCE FACIALE (v14)
+(en attente)
+
+## 🟧 FUTUR — LOCALISATION + TIMING (v15)
+(en attente)
+
+## 🟩 FINAL — BLOCKCHAIN (v16)
+(en attente)
+
 ============================================================  
 📌 6. FIN DU DOCUMENT  
 ============================================================  
