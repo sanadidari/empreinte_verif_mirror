@@ -36,6 +36,25 @@ Avant d'aller plus loin, un backend DOIT être choisi.
 
 ⮞ Le prochain agent doit lire `TASKS.md` → section P1.3.
 
+
+# NEXT_ACTION.md — PROTOCOL TASK ORDER (PTO-2)
+Niveau : TOP PRIORITY  
+Phase active : BIOMÉTRIE
+
+Mission unique autorisée :
+
+🟥 **Tester et valider la biométrie Android (empreinte digitale).**
+
+Étapes obligatoires :
+1. Vérifier que l’APK s’installe et s’ouvre  
+2. Tester l’authentification fingerprint  
+3. Identifier erreurs runtime  
+4. Remonter logs dans SUPERVISOR_REPORT.md  
+5. Stabiliser la logique biométrique  
+6. Préparer LoginView (phase 2)
+
+Aucune autre action n’est autorisée.
+
 ============================================================  
 🟥 ACTION FUTURE (non immédiate)  
 ============================================================  
