@@ -63,6 +63,14 @@ FILES:
     Projet : empreinte_verif
     Classification : STRATEGIC / HIGH-LEVEL / ZERO-ERROR
     Version : 1.0 — Phase 1 (Biométrie)
+ 
+  SUPERVISOR_REPORT.md: |
+    # SUPERVISOR_REPORT.md — Military Supervisor Operational Report v3.0
+    (… contenu complet …)
+
+  GOVERNOR_SPEC.md: |
+    # GOVERNOR_SPEC.md — Governor High-Level Command Protocol v2.0
+    (… contenu complet …)
 
     ## 1. VISION GLOBALE
     (… contenu complet de la vision stratégique ici …)
@@ -105,6 +113,7 @@ FILES:
 
   ROOT_CAUSE_CORRELATIONS.json: |
     {"clusters": []}
+
 
 # INDEX
 - manifest
