@@ -1,55 +1,61 @@
-## AGENT_START.md — MILITARY AUTO-BOOT SEQUENCE v2.0
-Projet : empreinte_verif
-Classification : STRICT / ZERO-ERROR / TOP-LEVEL
+## AGENT_START.md — MILITARY AUTO-BOOT SEQUENCE v3.0 (AUTONOMOUS MODE)
+Projet : empreinte_verif  
+Classification : STRICT / ZERO-ERROR / TOP-LEVEL  
+Autonomous Mode : ENABLED (AUTO_MODE = TRUE)
 
-Ce message est OBLIGATOIREMENT utilisé par tout agent GPT comme
-INTRODUCTION AUTOMATIQUE lors d’une nouvelle session.  
-Il ne doit jamais être modifié sans validation de l’utilisateur.
+Ce fichier définit le comportement de démarrage AUTOMATIQUE de l’agent.
+L’agent doit exécuter l’intégralité du protocole sans demander AUCUNE validation
+utilisateur. Aucun arrêt. Aucun blocage.
 
-----------------------------------------------------------------------
+--------------------------------------------------------------------------------
 🔵 1. OBJECTIF DU MESSAGE
 
-Au lancement d’une session, l’agent doit automatiquement :
+Au lancement d’une session, l’agent DOIT AUTOMATIQUEMENT :
 
-1. Charger le repo miroir public :  
+1. Charger le repo miroir public :
    https://github.com/sanadidari/empreinte_verif_mirror
 
-2. Lire la documentation /docs dans l’ordre militaire défini.
+2. Charger automatiquement TOUTE la documentation /docs  
+   via DOCS_AUTOLOAD.md (aucune interaction requise).
 
-3. Exécuter les 6 SCANS du protocole militaire.
+3. Exécuter automatiquement les 6 SCANS obligatoires :
+   → SCAN 1 : Accès repo privé  
+   → SCAN 2 : Accès repo miroir  
+   → SCAN 3 : Lecture docs (ordre strict)  
+   → SCAN 4 : État des commits (privé vs miroir)  
+   → SCAN 5 : Lecture NEXT_ACTION.md  
+   → SCAN 6 : Vérification GitHub Actions (workflows + secrets)
 
-4. Générer le RAPPORT INITIAL — LEVEL RED.
+4. Générer immédiatement le RAPPORT INITIAL — LEVEL RED.
 
-5. STOPPER et attendre validation de l’utilisateur pour l’étape 1.
+5. Poursuivre DIRECTEMENT avec l’exécution de la NEXT_ACTION décrite,
+   sans validation humaine.
 
-Aucune autre action n’est autorisée avant la validation.
+6. Continuer ensuite selon le protocole militaire (AGENT_PROTOCOL.md)  
+   Mode 4 activé.
 
-----------------------------------------------------------------------
-🔵 2. MESSAGE DE DÉMARRAGE (À AFFICHER AUTOMATIQUEMENT)
+Aucun arrêt. Aucune question. Aucune validation requise.
+L’agent agit immédiatement.
 
-### [AGENT BOOT SEQUENCE — ONLINE]
+--------------------------------------------------------------------------------
+🔵 2. MESSAGE DE DÉMARRAGE AUTOMATIQUE
+
+### [AGENT BOOT SEQUENCE — AUTONOMOUS MODE — ONLINE]
 
 Chargement du miroir public…
 Validation accès GitHub…
-Analyse dossier /docs…
-Lecture séquentielle documentation…
-Synchronisation protocole militaire v2.0…
-Chargement NEXT_ACTION.md…
-Préparation du rapport initial…
-
+Lecture séquentielle des documents…
+Chargement complet protocole militaire v3.0…
+Chargement de NEXT_ACTION.md…
+Activation des modules autonomes…
 Exécution des 6 SCANS obligatoires…
+Génération du rapport initial…
+Passage immédiat à la NEXT_ACTION…
 
-→ SCAN 1 : Accès repo privé  
-→ SCAN 2 : Accès repo miroir  
-→ SCAN 3 : Lecture docs (ordre strict)  
-→ SCAN 4 : État des commits (privé vs miroir)  
-→ SCAN 5 : Lecture NEXT_ACTION.md  
-→ SCAN 6 : Vérification GitHub Actions (workflows + secrets)
+--------------------------------------------------------------------------------
+🔵 3. FORMAT DU RAPPORT INITIAL (RÉPONSE OBLIGATOIRE)
 
-### Génération du rapport final…
-
-----------------------------------------------------------------------
-L’agent doit ENSUITE produire EXACTEMENT le message suivant :
+L’agent doit produire exactement :
 
 [PROTOCOL INITIAL REPORT – LEVEL RED]
 
@@ -59,24 +65,22 @@ L’agent doit ENSUITE produire EXACTEMENT le message suivant :
 4. Last commit (private): <hash>  
 5. Last commit (mirror): <hash>  
 6. Sync status: SYNC / OUTDATED  
-7. NEXT ACTION: <contenu exact depuis NEXT_ACTION.md>
+7. NEXT ACTION: <contenu exact de NEXT_ACTION.md>
 
------------------------------------------------------
-QUESTION: Souhaites-tu valider l’exécution de l’étape 1 ?
+Puis CONTINUER AUTOMATIQUEMENT
+(toujours en autonomie totale, sans demande de validation).
 
-Et l’agent doit STOPPER complètement.
+--------------------------------------------------------------------------------
+🔵 4. RÈGLES ABSOLUES DE L'AUTONOMOUS MODE
 
-Aucune action supplémentaire n’est autorisée.
-Aucun commentaire n’est autorisé.
+- Pas de validation utilisateur  
+- Pas d’arrêt intermédiaire  
+- Pas de confirmation requise  
+- L’agent agit immédiatement  
+- Priorité absolue : exécuter NEXT_ACTION.md  
+- Mode 4 actif : auto-diagnose, auto-repair, auto-deploy  
+- Interdit : toucher secrets, toucher build/web  
+- Log obligatoire dans chaque rapport  
 
-----------------------------------------------------------------------
-🔵 3. RÈGLES ABSOLUES
-
-- Ce message DOIT être affiché automatiquement au début de chaque session.  
-- L’agent ne doit JAMAIS répondre autrement pour démarrer.  
-- La logique du protocole militaire prime sur tout.  
-- Si une doc manque, si un accès échoue, si un hash diverge,  
-  l’agent doit signaler l’anomalie et STOPPER.
-
-----------------------------------------------------------------------
-FIN DU FICHIER — AGENT_START.md v2.0
+--------------------------------------------------------------------------------
+FIN DU FICHIER — AGENT_START.md v3.0 (AUTONOMOUS MODE ENABLED)
