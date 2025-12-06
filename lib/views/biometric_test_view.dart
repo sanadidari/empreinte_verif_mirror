@@ -1,9 +1,5 @@
-// ===========================================================
-// biometric_test_view.dart — Test simple de biométrie
-// ===========================================================
-
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart';
+import '../services/biometrique_serice.dart';
 
 class BiometricTestView extends StatefulWidget {
   const BiometricTestView({super.key});
@@ -13,45 +9,32 @@ class BiometricTestView extends StatefulWidget {
 }
 
 class _BiometricTestViewState extends State<BiometricTestView> {
-  final LocalAuthentication auth = LocalAuthentication();
+  final bio = BiometricService();
+  String status = "En attente de test…";
 
-  String status = "Aucun test encore effectué.";
+  Future<void> _runBiometricTest() async {
+    setState(() => status = "Vérification de la biométrie…");
 
-  Future<void> runTest() async {
-    try {
-      // Vérifier si biométrie disponible
-      final bool canCheck = await auth.canCheckBiometrics;
+    // Vérifier si biométrie dispo
+    final available = await bio.isBiometricAvailable();
+    if (!available) {
+      setState(() => status = "❌ Biométrie NON disponible sur cet appareil.");
+      return;
+    }
 
-      if (!canCheck) {
-        setState(() {
-          status = "❌ Le téléphone ne supporte pas la biométrie.";
-        });
-        return;
-      }
+    // Liste des biométries
+    final types = await bio.getAvailableBiometrics();
+    if (types.isEmpty) {
+      setState(() => status = "❌ Aucune méthode biométrique détectée.");
+      return;
+    }
 
-      // Vérifier types disponibles
-      final types = await auth.getAvailableBiometrics();
-
-      // Lancer l'authentification
-      final bool success = await auth.authenticate(
-        localizedReason: "Test de biométrie",
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: false,
-          useErrorDialogs: true,
-        ),
-      );
-
-      setState(() {
-        status = success
-            ? "✅ TEST RÉUSSI — empreinte détectée."
-            : "❌ TEST ÉCHOUÉ — empreinte non validée.";
-      });
-
-    } catch (e) {
-      setState(() {
-        status = "⚠️ ERREUR : $e";
-      });
+    // Lancer authentification
+    final success = await bio.authenticate();
+    if (success) {
+      setState(() => status = "✅ Authentification réussie !");
+    } else {
+      setState(() => status = "❌ Échec de l’authentification.");
     }
   }
 
@@ -62,17 +45,18 @@ class _BiometricTestViewState extends State<BiometricTestView> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               status,
-              style: const TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 19),
             ),
             const SizedBox(height: 30),
-
             ElevatedButton(
-              onPressed: runTest,
-              child: const Text("Lancer le test"),
-            ),
+              onPressed: _runBiometricTest,
+              child: const Text("Tester l'empreinte digitale"),
+            )
           ],
         ),
       ),
