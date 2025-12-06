@@ -1,44 +1,75 @@
-# DOCS_MANIFEST.yaml — MILITARY VERSION 1.1
-manifest_version: 1.1
-project: empreinte_verif
+# DOCS_MANIFEST.yaml — Documentation Structure v3.0  
+# Mise à jour : 06/12/2025 — 20:55  
+# Géré par l’agent Auto-Documentation v11
 
-repo_private: https://github.com/sanadidari/empreinte_verif
-repo_mirror:  https://github.com/sanadidari/empreinte_verif_mirror
+documents:
+  - name: STATE_PROJECT.md
+    path: docs/STATE_PROJECT.md
+    description: "Statut global, risques, TODO list active"
+    critical: true
 
-root_docs_path: /docs
+  - name: NEW_AGENT_ONBOARDING.md
+    path: docs/NEW_AGENT_ONBOARDING.md
+    description: "Protocole d'arrivée agents / règles / zones interdites"
+    critical: true
 
-watch_files:
-  - AGENT_START.md
-  - NEXT_ACTION.md
-  - STATE_PROJECT.md
-  - TASKS.md
-  - AGENT_PROTOCOL.md
-  - VISION_STRATEGIQUE.md     # ← NEW REQUIRED FILE
+  - name: TASKS.md
+    path: docs/TASKS.md
+    description: "Tâches opérationnelles, classées par priorité"
 
-scan_order:
-  - load_manifest
-  - load_agent_start
-  - load_next_action
-  - load_vision_strategique   # ← NEW SCAN STEP
-  - load_state_project
-  - load_tasks
-  - load_agent_protocol
-  - index_other_docs
+  - name: NEXT_ACTION.md
+    path: docs/NEXT_ACTION.md
+    description: "Directive immédiate pour le prochain agent"
 
-file_patterns:
-  docs: "*.md"
-  code:
-    - "pubspec.yaml"
-    - "lib/**"
-    - "web/**"
-    - "android/**"
-    - "ios/**"
+  - name: SUPERVISOR_REPORT.md
+    path: docs/SUPERVISOR_REPORT.md
+    description: "Rapport de surveillance système 24/24"
 
-scan_mode: strict
-scan_interval_minutes: 0
-auto_sync: true
+  - name: GOVERNOR_SPEC.md
+    path: docs/GOVERNOR_SPEC.md
+    description: "Règles d’autorité et gestion des agents"
 
-notes: |
-  This manifest is authoritative.
-  VISION_STRATEGIQUE.md defines long-term project strategy.
-  NEXT_ACTION.md remains blocking when status=BLOCKING.
+  - name: ROOT_CAUSE_DB.json
+    path: docs/ROOT_CAUSE_DB.json
+    description: "Base causes racines des crashs"
+
+  - name: ROOT_CAUSE_CORRELATIONS.json
+    path: docs/ROOT_CAUSE_CORRELATIONS.json
+    description: "Regroupements logiques et patterns"
+
+  - name: DOCS_SCAN_INSTRUCTIONS.md
+    path: docs/DOCS_SCAN_INSTRUCTIONS.md
+    description: "Instructions pour scan auto complet"
+
+  - name: HISTORY.md
+    path: docs/HISTORY.md
+    description: "Historique chronologique des versions"
+
+  - name: AGENT_START.md
+    path: docs/AGENT_START.md
+    description: "Entrée du système multi-agents"
+
+  - name: SYSTEM_RULES.md
+    path: docs/SYSTEM_RULES.md
+    description: "Règles militaires PRO MODE"
+
+workflows:
+  - name: CI Pipeline
+    path: .github/workflows/ci.yaml
+    description: "Lint, build, test"
+
+  - name: Auto-Documentation
+    path: .github/workflows/autodoc.yaml
+    description: "Met à jour automatiquement STATE/TASKS/NEXT_ACTION"
+
+  - name: Crash Investigator
+    path: .github/workflows/crash_investigator.yaml
+
+  - name: Correlation Engine
+    path: .github/workflows/correlation_engine.yaml
+
+  - name: TITAN Engine
+    path: .github/workflows/titan.yaml
+
+  - name: OMEGA Engine
+    path: .github/workflows/omega.yaml
