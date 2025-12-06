@@ -1,0 +1,44 @@
+# DOCS_MANIFEST.yaml — MILITARY VERSION 1.1
+manifest_version: 1.1
+project: empreinte_verif
+
+repo_private: https://github.com/sanadidari/empreinte_verif
+repo_mirror:  https://github.com/sanadidari/empreinte_verif_mirror
+
+root_docs_path: /docs
+
+watch_files:
+  - AGENT_START.md
+  - NEXT_ACTION.md
+  - STATE_PROJECT.md
+  - TASKS.md
+  - AGENT_PROTOCOL.md
+  - VISION_STRATEGIQUE.md     # ← NEW REQUIRED FILE
+
+scan_order:
+  - load_manifest
+  - load_agent_start
+  - load_next_action
+  - load_vision_strategique   # ← NEW SCAN STEP
+  - load_state_project
+  - load_tasks
+  - load_agent_protocol
+  - index_other_docs
+
+file_patterns:
+  docs: "*.md"
+  code:
+    - "pubspec.yaml"
+    - "lib/**"
+    - "web/**"
+    - "android/**"
+    - "ios/**"
+
+scan_mode: strict
+scan_interval_minutes: 0
+auto_sync: true
+
+notes: |
+  This manifest is authoritative.
+  VISION_STRATEGIQUE.md defines long-term project strategy.
+  NEXT_ACTION.md remains blocking when status=BLOCKING.
