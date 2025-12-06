@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/biometrique_serice.dart';
+import '../services/biometric_service.dart';
 
 class BiometricTestView extends StatefulWidget {
   const BiometricTestView({super.key});
