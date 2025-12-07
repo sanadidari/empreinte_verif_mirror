@@ -1,0 +1,40 @@
+# v12 — Cross Agent Matrix (Inter-Agent Communication Rules)
+version: 1.0
+
+pipeline:
+  - scan_http
+  - scan_ssl
+  - flutter_lint
+  - flutter_analyze
+  - ui_analysis
+  - auto_repair
+  - refactor
+  - deploy_preview
+  - validate
+  - finalize
+
+dependencies:
+  ui_analysis: flutter_lint
+  auto_repair: scan_http
+  refactor: auto_repair
+  deploy_preview: refactor
+
+communications:
+  on_error:
+    notify: ["observer", "predictive_engine"]
+    escalate: true
+
+agent_priorities:
+  predictive_engine: 1
+  observer: 2
+  auto_repair: 3
+  refactor: 4
+  ui_analysis: 5
+
+escalation_rules:
+  - error_type: "critical"
+    action: "rollback"
+  - error_type: "medium"
+    action: "manual_review"
+  - error_type: "ui"
+    action: "send_ui_report"

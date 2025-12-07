@@ -1,0 +1,141 @@
+🟦 ✔ COMPRÉHENSION EXACTE DU PROJET
+
+Ton application empreinte_verif n’est pas seulement une validation d’empreinte digitale.
+
+C’est un SYSTÈME D’AUTHENTIFICATION INTERNATIONALE EN 5 COUCHES, pour vérifier qu’un employé est réellement autorisé à consulter :
+
+ses projets hebdomadaires
+
+ses missions
+
+ses rapports internes
+
+son espace employé privé
+
+Le système doit garantir que l’employé à l’écran = la même personne dans la vraie vie,
+et qu’il est dans le bon timing, au bon endroit, validé cryptographiquement.
+
+🟥 ✔ LES 5 COUCHES D’AUTHENTIFICATION
+1️⃣ — BIOMÉTRIE (empreinte digitale / FaceID)
+
+Objectif : vérifier que la personne tient réellement son téléphone.
+
+Technologies :
+
+local_auth
+
+Secure Enclave (iOS)
+
+Android BiometricPrompt
+
+Rôle : première clé locale.
+
+2️⃣ — RECONNAISSANCE FACIALE
+
+Objectif : confirmer que la personne correspond bien à son identité visuelle.
+
+Technologies possibles :
+
+TensorFlow Lite
+
+FaceNet
+
+Google MLKit (plus simple et fiable)
+
+API Cloud (Google Vision / AWS Rekognition) si tu veux du cloud
+
+Rôle : deuxième clé physiologique.
+
+3️⃣ — TIMING INTERNATIONAL (preuve temporelle certifiée)
+
+Objectif : empêcher la falsification de l’heure locale sur l’appareil.
+
+Technique :
+
+récupérer le temps officiel depuis un serveur d’horloge universelle (NTP)
+
+comparer avec l’heure du device
+
+autoriser seulement si la différence < X secondes
+
+Pourquoi ?
+📌 Car un employé pourrait manipuler l’heure pour contourner des validations.
+
+Sources de temps certifiées :
+
+time.google.com
+
+pool.ntp.org
+
+time.cloudflare.com
+
+Rôle : troisième clé temporelle certifiée.
+
+4️⃣ — LOCALISATION GÉOGRAPHIQUE
+
+Objectif : garantir que l’employé se trouve physiquement dans un lieu autorisé.
+
+Exemple :
+
+au bureau
+
+sur un chantier
+
+centre logistique
+
+zone autorisée
+
+Technologies :
+
+GPS + Network + WiFi triangulation
+
+Détection anti-fake-location (root, Xposed, mock location)
+
+Rôle : quatrième clé spatio-géographique.
+
+5️⃣ — BLOCKCHAIN (preuve finale, immuable)
+
+Objectif : écrire une preuve inaltérable que :
+
+l’employé X
+
+à l’instant T
+
+à la position Y
+
+avec biométrie et visage validés
+
+a accédé à son espace employé
+
+Cela crée une preuve légale, non modifiable, auditée, documentaire.
+
+Technologies possibles :
+
+Polygon
+
+Avalanche
+
+Hyperledger Fabric
+
+IPFS + hash sur blockchain
+
+Rôle : cinquième clé cryptographique immuable.
+
+🟩 ✔ CE QUE TON PROJET EST RÉELLEMENT
+
+Une plateforme internationale d’authentification multi-couches
+pour garantir l'identité d’un employé AVANT de lui montrer ses tâches hebdomadaires.
+
+C’est un système ultra-sécurisé,
+comparable aux systèmes utilisés dans :
+
+banques
+
+gouvernements
+
+entreprises internationales
+
+zones d’accès contrôlé
+
+Ton app Flutter n’est qu’une interface du système,
+pas le système entier.

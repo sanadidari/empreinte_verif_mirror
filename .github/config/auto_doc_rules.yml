@@ -1,0 +1,24 @@
+# v11 — Auto Documentation Rules
+version: 1.0
+
+update_strategy:
+  mode: "incremental"   # auto-update partiel sans écraser l’historique
+  auto_commit: true
+  commit_message: "docs(auto): sync documentation via module v11"
+
+files_to_update:
+  - docs/STATE_PROJECT.md
+  - docs/HISTORY.md
+  - docs/TASKS.md
+
+rules:
+  include_issue_summary: true
+  include_fix_summary: true
+  include_agent_actions: true
+  max_history_lines: 500
+
+trigger_on:
+  - "push"
+  - "auto_repair"
+  - "flutter_refactor"
+  - "observer_alert"

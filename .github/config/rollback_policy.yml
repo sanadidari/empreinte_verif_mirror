@@ -1,0 +1,29 @@
+# v10 — Automatic Rollback Policy
+version: 1.0
+
+rollback_conditions:
+  http_errors:
+    enabled: true
+    threshold: 0.10   # 10% erreurs HTTP pendant 5 minutes
+    sample_window: 300
+  downtime:
+    enabled: true
+    threshold_seconds: 20
+  build_failures:
+    enabled: true
+    consecutive_failures: 2
+
+targets:
+  - branch: "main"
+    allow_rollback: true
+  - branch: "production"
+    allow_rollback: true
+
+actions:
+  before_rollback:
+    - "notify:agent"
+    - "freeze:deployments"
+
+  after_rollback:
+    - "generate:incident_report"
+    - "update:STATE_PROJECT"

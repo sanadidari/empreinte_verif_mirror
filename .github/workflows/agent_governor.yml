@@ -1,0 +1,55 @@
+name: Agent Governor — Global Command & Control
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"  # exécution toutes les 4h
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+env:
+  RCDB: "docs/ROOT_CAUSE_DB.json"
+  CORR: "docs/ROOT_CAUSE_CORRELATIONS.json"
+  REPORT: "docs/SUPERVISOR_REPORT.md"
+  ORDERS: "governor/GOVERNOR_ORDERS.json"
+
+jobs:
+  governor:
+    name: System Governance & Command
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install requirements
+        run: |
+          pip install -r tools/ai_requirements.txt || true
+
+      - name: Run Governor Engine
+        run: |
+          mkdir -p governor
+          python tools/agent_governor.py \
+            --rcdb "${{ env.RCDB }}" \
+            --corr "${{ env.CORR }}" \
+            --report "${{ env.REPORT }}" \
+            --out "${{ env.ORDERS }}"
+
+      - name: Commit new Governor Orders
+        run: |
+          git config --local user.email "governor@system.local"
+          git config --local user.name "Agent Governor"
+          git add governor/GOVERNOR_ORDERS.json
+          git commit -m "gov: updated governor orders" || echo "no changes"
+          git push origin HEAD:main || echo "push skipped"

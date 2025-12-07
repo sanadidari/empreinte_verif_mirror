@@ -1,0 +1,61 @@
+name: TITAN MODE — Autonomous DevOps Intelligence
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # Toutes les 30 minutes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+env:
+  POLICY: "titan/TITAN_POLICY.md"
+  STATE: "titan/TITAN_STATE.json"
+  RCDB: "docs/ROOT_CAUSE_DB.json"
+  CORR: "docs/ROOT_CAUSE_CORRELATIONS.json"
+  REPORT: "docs/SUPERVISOR_REPORT.md"
+  ORDERS: "governor/GOVERNOR_ORDERS.json"
+
+jobs:
+  titan:
+    name: TITAN — Full Autonomous Cycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/ai_requirements.txt || true
+
+      - name: Run TITAN Engine
+        run: |
+          mkdir -p titan
+          python tools/titan_engine.py \
+            --policy "${{ env.POLICY }}" \
+            --state "${{ env.STATE }}" \
+            --rcdb "${{ env.RCDB }}" \
+            --corr "${{ env.CORR }}" \
+            --report "${{ env.REPORT }}" \
+            --orders "${{ env.ORDERS }}" \
+            --out titan/TITAN_STATE.json
+
+      - name: Commit TITAN state update
+        run: |
+          git config --local user.email "titan@system.local"
+          git config --local user.name "TITAN Engine"
+          git add titan/TITAN_STATE.json
+          git commit -m "titan: state update" || true
+          git push origin HEAD:main || echo "No push (PR mode or protected)"

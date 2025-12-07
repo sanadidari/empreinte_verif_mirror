@@ -1,0 +1,52 @@
+name: Self-Supervisor Agent — System Behavior Auditor
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # Toutes les 6h
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  RCDB: "docs/ROOT_CAUSE_DB.json"
+  CORR: "docs/ROOT_CAUSE_CORRELATIONS.json"
+  OUT: "docs/SUPERVISOR_REPORT.md"
+
+jobs:
+  supervise:
+    name: Audit System Behavior
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/ai_requirements.txt || true
+
+      - name: Run Self Supervisor
+        run: |
+          python tools/self_supervisor.py \
+            --rcdb "${{ env.RCDB }}" \
+            --corr "${{ env.CORR }}" \
+            --out "${{ env.OUT }}"
+
+      - name: Commit updated supervisor report
+        run: |
+          git config --local user.email "supervisor@system.local"
+          git config --local user.name "Self Supervisor Agent"
+          git add ${{ env.OUT }}
+          git commit -m "chore: update supervisor audit report" || echo "no changes"
+          git push origin HEAD:main || echo "push skipped"

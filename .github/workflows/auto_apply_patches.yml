@@ -1,0 +1,85 @@
+name: Auto Apply Patch Templates — Suggest & Apply Fixes
+
+on:
+  workflow_run:
+    workflows:
+      - "AI Correlation Engine — Link incidents & suggest fixes"
+      - "AI Root-Cause Database — Incident Memory Engine"
+      - "AI Crash Investigator — Automated Root Cause Analysis"
+    types:
+      - completed
+
+  workflow_dispatch:
+
+env:
+  PATCH_DIR: ".patches"
+  TOOLS_DIR: "tools"
+  TASKS_PATH: "docs/TASKS.md"
+
+jobs:
+  propose_or_apply:
+    name: Propose/Apply Patch Templates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare environment
+        run: |
+          mkdir -p $PATCH_DIR
+          python -V || true
+
+      - name: Install python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/ai_requirements.txt || true
+
+      - name: Identify top cluster suggestion
+        run: |
+          if [ ! -f "docs/ROOT_CAUSE_CORRELATIONS.json" ]; then
+            echo "No correlations file — nothing to apply."
+            exit 0
+          fi
+          jq '.clusters | sort_by(-.count) | .[0]' docs/ROOT_CAUSE_CORRELATIONS.json > /tmp/top_cluster.json || true
+          echo "Top cluster:"
+          cat /tmp/top_cluster.json || true
+
+      - name: Decide action (propose vs apply)
+        id: decide
+        run: |
+          # Policy: if count >= 3 -> attempt auto-apply; else create PR proposal
+          COUNT=$(jq -r '.count // 0' /tmp/top_cluster.json || echo 0)
+          SIG=$(jq -r '.signature // ""' /tmp/top_cluster.json || echo "")
+          SUG=$(jq -r '.suggestion // ""' /tmp/top_cluster.json || echo "")
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          echo "signature=$SIG" >> $GITHUB_OUTPUT
+          echo "suggestion=$SUG" >> $GITHUB_OUTPUT
+          if [ "$COUNT" -ge 3 ]; then
+            echo "action=apply" >> $GITHUB_OUTPUT
+          else
+            echo "action=propose" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run patch applier (apply mode)
+        if: steps.decide.outputs.action == 'apply'
+        run: |
+          echo "AUTO-APPLY MODE: running patch applier"
+          python tools/patch_applier.py --cluster /tmp/top_cluster.json --apply --patch-dir .patches --out /tmp/patch_result.json || true
+          cat /tmp/patch_result.json || true
+
+      - name: Run patch applier (propose mode)
+        if: steps.decide.outputs.action == 'propose'
+        run: |
+          echo "PROPOSE MODE: generate PR with suggested patch"
+          python tools/patch_applier.py --cluster /tmp/top_cluster.json --patch-dir .patches --out /tmp/patch_result.json || true
+          cat /tmp/patch_result.json || true
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch-application-result
+          path: /tmp/patch_result.json

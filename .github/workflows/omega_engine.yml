@@ -1,0 +1,54 @@
+name: OMEGA MODE — Autonomous Evolution Engine
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # toutes les heures
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  STATE: "omega/OMEGA_STATE.json"
+  VERSION: "omega/VERSION.txt"
+  CHANGELOG: "omega/CHANGELOG_PENDING.md"
+  RCDB: "docs/ROOT_CAUSE_DB.json"
+  CORR: "docs/ROOT_CAUSE_CORRELATIONS.json"
+  SUP: "docs/SUPERVISOR_REPORT.md"
+  GOV: "governor/GOVERNOR_ORDERS.json"
+
+jobs:
+  omega:
+    name: Omega Evolution Cycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install -r tools/ai_requirements.txt || true
+
+      - name: Run Omega Engine
+        run: |
+          mkdir -p omega
+          python tools/omega_engine.py \
+            --state "${{ env.STATE }}" \
+            --version "${{ env.VERSION }}" \
+            --changelog "${{ env.CHANGELOG }}" \
+            --rcdb "${{ env.RCDB }}" \
+            --corr "${{ env.CORR }}" \
+            --sup "${{ env.SUP }}" \
+            --gov "${{ env.GOV }}"
+
+      - name: Commit Omega state
+        run: |
+          git config --local user.email "omega@system.local"

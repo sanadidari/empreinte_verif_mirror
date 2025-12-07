@@ -1,2 +1,1 @@
-# placeholder for Python deps; engine uses stdlib only for now
-# keep file so workflows can `pip install -r`
+# keep minimal for advisor (standard library is sufficient)

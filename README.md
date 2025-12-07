@@ -1,89 +1,101 @@
-# empreinte_verif — Flutter Web + Vercel (PRO MODE)
+# empreinte_verif — Military AI Control Framework + 5-Layer Employee Security System
 
-Projet Flutter Web déployé automatiquement via :
-  - GitHub (repo privé)
-  - GitHub Actions (CI/CD)
-  - Vercel (hébergement)
-  - Miroir public GitHub (lecture agents GPT)
+This repository implements a dual-architecture:
 
-Ce dépôt utilise un système documentaire militaire garantissant :
-  - précision
-  - zéro erreur
-  - cohérence inter-agents
-  - pipeline stable et reproductible
+1. **A military-grade AI governance system**  
+   ensuring strict, deterministic, automated control over ChatGPT agents.
 
-----------------------------------------------------------------------
-## 1. Structure principale du projet
+2. **A high-security employee access system**  
+   based on **5 layers of authentication**, where biometrics represent only 1/5 of the full project vision.
 
-lib/                → Code Flutter  
-web/                → Entrée Flutter Web  
-docs/               → Documentation militaire  
-.github/workflows/  → CI/CD (build + miroir)  
-vercel.json         → Routage SPA  
-pubspec.yaml        → Dépendances  
+This README summarizes the roles of each file and how the project must be operated.
 
-----------------------------------------------------------------------
-## 2. Pipeline CI/CD (Résumé)
+---
 
-Push sur main déclenche :
-  - Build Flutter Web
-  - Déploiement Vercel
-  - Synchronisation miroir public
+# 🔵 PRIMARY PROJECT VISION (MUST READ FIRST)
+Before interacting with the system, all agents and developers MUST read:
 
-Workflows :
-  - build_web.yml  
-  - mirror.yml  
+```
+/docs/00_PROJECT_VISION.md
+```
 
-Secrets requis :
-  - VERCEL_TOKEN
-  - MIRROR_DEPLOY_KEY
+This file explains:
+- The 5 layers of authentication  
+- The long-term vision of the project  
+- Why biometrics = only Layer 1  
+- The security model and future development roadmap  
 
-----------------------------------------------------------------------
-## 3. Documentation militaire
+---
 
-Toute la documentation opérationnelle se trouve dans :
-  /docs/
+# 🔵 MILITARY AI CONTROL SYSTEM (EXECUTABLE)
+The operational behavior of all AI agents is defined in:
 
-Lecture obligatoire pour agents :
-  - AGENT_PROTOCOL.md
-  - STARTUP_CHECKLIST.md
-  - NEXT_ACTION.md
-  - STATE_PROJECT.md
-  - RULES.md
-  - ARCHITECTURE.md
-  - DEPLOY_GUIDE.md
-  - HISTORY.md
-  - TASKS.md
-  - CHECKLIST_MASTER.md
+```
+01_BOOT_AND_RULES.md
+02_SYSTEM_SCAN.md
+03_MISSION_STATUS.md
+```
 
-----------------------------------------------------------------------
-## 4. Déploiement
+These files:
+- Control agent behavior  
+- Enforce PRO-MODE  
+- Define the automatic BOOT → MIRROR → SCAN → STATUS pipeline  
+- Restrict modifications  
+- Maintain mission integrity  
+- Require deterministic, one-task-per-message execution  
 
-Le build est généré par :
-  flutter build web --release
+Agents MUST execute these files automatically in the defined sequence.
 
-Déployé automatiquement sur Vercel avec :
-  build/web/
+---
 
-Routage SPA configuré dans vercel.json.
+# 🔵 DOCUMENTATION FILES (NOT EXECUTED)
+Stored inside `/docs/`:
 
-Domaines :
-  https://qrpruf.sanadidari.com  
-  https://www.qrpruf.sanadidari.com  
+```
+00_PROJECT_VISION.md       ← Read first (project purpose)
+05_ROADMAP.md              ← Future phases & development plan
+06_LAYER_STRUCTURE.md      ← Flutter architecture for 5 layers
+```
 
-----------------------------------------------------------------------
-## 5. Miroir public (source agents GPT)
+These files:
+- Provide project context  
+- Provide internal structure  
+- Provide long-term strategy  
+They are *not* part of the execution pipeline.
 
-URL miroir :
-  https://github.com/sanadidari/empreinte_verif_mirror
+---
 
-Ce miroir fournit aux agents GPT un accès complet au code et à la
-documentation sans exposer le repo privé.
+# 🔵 REPOSITORY MIRROR
+All agents MUST load the mirror:
 
-----------------------------------------------------------------------
-## 6. Licence
+```
+https://github.com/sanadidari/empreinte_verif_mirror
+```
 
-Projet propriétaire — Utilisation restreinte.  
+---
 
-----------------------------------------------------------------------
-FIN DU FICHIER — README.md (FORMAT 80 COLONNES)
+# 🔵 HOW TO START A NEW AGENT
+1. Send:
+```
+00_PROJECT_VISION.md
+```
+
+2. Then send the 4 military files:
+```
+01_BOOT_AND_RULES.md
+02_SYSTEM_SCAN.md
+03_MISSION_STATUS.md
+```
+
+3. The agent will automatically execute the full pipeline.
+
+4. Validate the agent using:
+```
+/docs/AGENT_VERIFICATION_TEST.md
+```
+
+5. Only then continue development.
+
+---
+
+# END OF README.md

@@ -1,0 +1,102 @@
+name: AI Root-Cause Database — Incident Memory Engine
+
+on:
+  workflow_run:
+    workflows:
+      - "AI Crash Investigator — Automated Root Cause Analysis"
+      - "Auto-Heal Engine — Flutter Project Self-Repair"
+      - "Sentry Integration — Error & Crash Pipeline"
+      - "Reporting Aggregator — Logs & Alerts"
+      - "CI / CD — Flutter Web → Vercel"
+    types:
+      - completed
+
+  workflow_dispatch:
+
+env:
+  DB_PATH: "docs/ROOT_CAUSE_DB.json"
+  OUTPUT_DIR: "/tmp/rcdb"
+
+jobs:
+  update_rcdb:
+    name: Update Root-Cause Database
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare directories
+        run: |
+          mkdir -p $OUTPUT_DIR
+
+      - name: Load existing RCDB (or create new)
+        id: loaddb
+        run: |
+          if [ -f "$DB_PATH" ]; then
+            cp "$DB_PATH" $OUTPUT_DIR/db.json
+          else
+            echo '{"incidents":[]}' > $OUTPUT_DIR/db.json
+          fi
+
+      - name: Collect Investigation Summary
+        id: scan
+        run: |
+          SUMMARY="NO_SUMMARY"
+          if [ -f "investigation_summary.md" ]; then
+            SUMMARY=$(cat investigation_summary.md)
+          elif [ -f "/tmp/ai_crash_investigator/investigation_summary.md" ]; then
+            SUMMARY=$(cat /tmp/ai_crash_investigator/investigation_summary.md)
+          fi
+
+          echo "summary<<EOF" >> $GITHUB_OUTPUT
+          echo "$SUMMARY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate incident entry
+        id: buildentry
+        run: |
+          WF="${{ github.event.workflow_run.name }}"
+          CONCL="${{ github.event.workflow_run.conclusion }}"
+          RUNID="${{ github.event.workflow_run.id }}"
+          SHA=$(git rev-parse HEAD)
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          mkdir -p $OUTPUT_DIR
+          cat <<EOF > $OUTPUT_DIR/new_incident.json
+{
+  "id": "$RUNID",
+  "workflow": "$WF",
+  "conclusion": "$CONCL",
+  "commit": "$SHA",
+  "timestamp": "$DATE",
+  "summary": "${{ steps.scan.outputs.summary }}"
+}
+EOF
+
+      - name: Merge incident into RCDB
+        run: |
+          DB=$OUTPUT_DIR/db.json
+          NEW=$OUTPUT_DIR/new_incident.json
+          OUT=$OUTPUT_DIR/merged.json
+
+          jq '.incidents += [input]' "$DB" "$NEW" > "$OUT"
+          cp "$OUT" "$DB_PATH"
+
+      - name: Commit updated RCDB
+        run: |
+          git config --local user.email "rcdb@system.local"
+          git config --local user.name "RCDB Engine"
+
+          git add "$DB_PATH"
+          git commit -m "chore: update ROOT_CAUSE_DB.json (auto incident entry)" || echo "No changes"
+          git push origin HEAD:main || echo "Push skipped (PR mode or no changes)"
+
+      - name: Upload RCDB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: root-cause-database
+          path: ${{ env.DB_PATH }}

@@ -1,0 +1,32 @@
+# v9 — Predictive Engine Configuration
+version: 1.0
+
+risk_levels:
+  low: 0.30       # Alerte légère
+  medium: 0.60    # Alerte prioritaire
+  high: 0.90      # Blocage critique
+
+flutter_rules:
+  - name: sdk_mismatch
+    weight: 0.20
+  - name: missing_assets
+    weight: 0.15
+  - name: unused_imports
+    weight: 0.10
+  - name: build_failures
+    weight: 0.30
+  - name: web_errors
+    weight: 0.25
+
+web_checks:
+  - endpoint: "https://qrpruf.sanadidari.com"
+    max_latency_ms: 1500
+    max_error_rate: 0.10
+  - endpoint: "https://sanadidari.com"
+    max_latency_ms: 2000
+
+failure_prediction:
+  enabled: true
+  model: "v9.2-heurstic"
+  min_confidence: 0.35
+  auto_tag: true
