@@ -1,6 +1,18 @@
 {
+  "cleanUrls": true,
+  "static": {
+    "include": [
+      "static"
+    ]
+  },
   "rewrites": [
-    { "source": "/install.html", "destination": "/static/install.html" },
-    { "source": "/setup.html", "destination": "/static/setup.html" }
+    {
+      "source": "/install.html",
+      "destination": "/static/install.html"
+    },
+    {
+      "source": "/setup.html",
+      "destination": "/static/setup.html"
+    }
   ]
 }
