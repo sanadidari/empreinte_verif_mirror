@@ -2,8 +2,5 @@
   "rewrites": [
     { "source": "/install.html", "destination": "/static/install.html" },
     { "source": "/setup.html", "destination": "/static/setup.html" }
-  ],
-  "builds": [
-    { "src": "build/web/**", "use": "@vercel/static" }
   ]
 }
