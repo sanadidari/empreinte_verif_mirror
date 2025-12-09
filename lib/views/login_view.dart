@@ -1,13 +1,12 @@
 // ==================================================================
-// login_view.dart — Écran de connexion PRO
+// login_view.dart — Authentification biométrique + API (Version PRO)
 // Projet : empreinte_verif
-// Auteur : Agent Militaire v3.0
 // ==================================================================
 
 import 'package:flutter/material.dart';
 import '../services/biometric_service.dart';
-import 'biometric_test_view.dart';
-import 'home_view.dart';
+import '../services/api_service.dart';
+import '../services/secure_storage.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -21,29 +20,65 @@ class _LoginViewState extends State<LoginView> {
   String status = "";
 
   Future<void> authenticate() async {
-    setState(() => status = "Vérification biométrique...");
+    setState(() => status = "Scanner votre empreinte...");
 
+    // --------------------------------------------------------
+    // 1) Vérifier disponibilité biométrie
+    // --------------------------------------------------------
     final available = await _bio.isBiometricAvailable();
     if (!available) {
-      setState(() =>
-          status = "❌ Biométrie non disponible sur cet appareil.");
+      setState(() => status = "❌ Biométrie non disponible.");
       return;
     }
 
+    // --------------------------------------------------------
+    // 2) Scanner l’empreinte
+    // --------------------------------------------------------
     final success = await _bio.authenticate();
-
-    if (success) {
-      setState(() => status = "✅ Empreinte validée !");
-      await Future.delayed(const Duration(milliseconds: 700));
-
-      // Après succès : naviguer vers l'accueil
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeView()),
-      );
-    } else {
-      setState(() => status = "❌ Échec de l'authentification biométrique.");
+    if (!success) {
+      setState(() => status = "❌ Échec de l’authentification biométrique.");
+      return;
     }
+
+    setState(() => status = "Empreinte validée ✔");
+
+    // --------------------------------------------------------
+    // 3) Génération d’un token local
+    //    (selon ton backend, ici format simple)
+    // --------------------------------------------------------
+    final generatedToken = DateTime.now().millisecondsSinceEpoch.toString();
+    await SecureStorage.saveToken(generatedToken);
+
+    setState(() => status = "Token généré : $generatedToken");
+
+    // --------------------------------------------------------
+    // 4) Appel API auth_employee
+    // --------------------------------------------------------
+    final response = await ApiService.authEmployee(generatedToken);
+
+    if (response["success"] == false) {
+      setState(() => status = "❌ API : ${response["message"]}");
+      return;
+    }
+
+    // --------------------------------------------------------
+    // 5) Extraction données employé
+    // --------------------------------------------------------
+    final employeeId = response["employee"]["id"];
+    final employeeName = response["employee"]["nom"];
+
+    // --------------------------------------------------------
+    // 6) Navigation avec données réelles
+    // --------------------------------------------------------
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(
+      context,
+      '/home',
+      arguments: {
+        "employeeId": employeeId,
+        "employeeName": employeeName,
+      },
+    );
   }
 
   @override
@@ -63,27 +98,15 @@ class _LoginViewState extends State<LoginView> {
 
             ElevatedButton(
               onPressed: authenticate,
-              child: const Text("Se connecter avec empreinte"),
+              child: const Text("Se connecter avec l’empreinte"),
             ),
 
             const SizedBox(height: 20),
 
             Text(
               status,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Bouton vers le test biométrique déjà installé
-            TextButton(
-              child: const Text("Tester la biométrie"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BiometricTestView()),
-                );
-              },
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
