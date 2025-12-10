@@ -11,14 +11,20 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Support empreinte digitale
+  # Support empreinte digitale (APK uniquement)
   local_auth: ^2.3.0
 
   # Ouverture de liens externes
   url_launcher: ^6.2.5
 
-  # Pour icônes / Material
+  # Icônes Cupertino / Material
   cupertino_icons: ^1.0.6
+
+  # Backend Supabase (PostgreSQL + API)
+  supabase_flutter: ^2.3.4
+
+  # Stockage sécurisé local (pour token si besoin)
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:
