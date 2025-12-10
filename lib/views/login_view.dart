@@ -1,12 +1,8 @@
-// ==================================================================
-// login_view.dart — Authentification biométrique + API (Version PRO)
-// Projet : empreinte_verif
-// ==================================================================
-
 import 'package:flutter/material.dart';
 import '../services/biometric_service.dart';
-import '../services/api_service.dart';
 import '../services/secure_storage.dart';
+import '../services/api_service.dart';
+import 'home_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,69 +12,48 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final BiometricService _bio = BiometricService();
+  final bio = BiometricService();
   String status = "";
 
   Future<void> authenticate() async {
-    setState(() => status = "Scanner votre empreinte...");
+    setState(() => status = "Vérification biométrique…");
 
-    // --------------------------------------------------------
-    // 1) Vérifier disponibilité biométrie
-    // --------------------------------------------------------
-    final available = await _bio.isBiometricAvailable();
+    final available = await bio.isBiometricAvailable();
     if (!available) {
       setState(() => status = "❌ Biométrie non disponible.");
       return;
     }
 
-    // --------------------------------------------------------
-    // 2) Scanner l’empreinte
-    // --------------------------------------------------------
-    final success = await _bio.authenticate();
-    if (!success) {
-      setState(() => status = "❌ Échec de l’authentification biométrique.");
+    final ok = await bio.authenticate();
+    if (!ok) {
+      setState(() => status = "❌ Échec biométrique.");
       return;
     }
 
-    setState(() => status = "Empreinte validée ✔");
+    // -----------------------------------------
+    // TOKEN FIXE POUR LES TESTS AVEC SUPABASE
+    // -----------------------------------------
+    final token = "123456789_TEST_TOKEN"; // <= TOKEN FIXE
 
-    // --------------------------------------------------------
-    // 3) Génération d’un token local
-    //    (selon ton backend, ici format simple)
-    // --------------------------------------------------------
-    final generatedToken = DateTime.now().millisecondsSinceEpoch.toString();
-    await SecureStorage.saveToken(generatedToken);
+    // Sauvegarde locale
+    await SecureStorage.saveToken(token);
 
-    setState(() => status = "Token généré : $generatedToken");
+    // Auth API Supabase
+    final api = await ApiService.authEmployee(token);
 
-    // --------------------------------------------------------
-    // 4) Appel API auth_employee
-    // --------------------------------------------------------
-    final response = await ApiService.authEmployee(generatedToken);
-
-    if (response["success"] == false) {
-      setState(() => status = "❌ API : ${response["message"]}");
-      return;
+    if (api["success"] == true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HomeView(
+            employeeName: api["employee"]["name"],
+            employeeId: api["employee"]["id"],
+          ),
+        ),
+      );
+    } else {
+      setState(() => status = "❌ API: ${api["message"]}");
     }
-
-    // --------------------------------------------------------
-    // 5) Extraction données employé
-    // --------------------------------------------------------
-    final employeeId = response["employee"]["id"];
-    final employeeName = response["employee"]["nom"];
-
-    // --------------------------------------------------------
-    // 6) Navigation avec données réelles
-    // --------------------------------------------------------
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(
-      context,
-      '/home',
-      arguments: {
-        "employeeId": employeeId,
-        "employeeName": employeeName,
-      },
-    );
   }
 
   @override
@@ -90,24 +65,12 @@ class _LoginViewState extends State<LoginView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Veuillez vous authentifier",
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 30),
-
             ElevatedButton(
               onPressed: authenticate,
-              child: const Text("Se connecter avec l’empreinte"),
+              child: const Text("Se connecter avec empreinte"),
             ),
-
             const SizedBox(height: 20),
-
-            Text(
-              status,
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
+            Text(status),
           ],
         ),
       ),
