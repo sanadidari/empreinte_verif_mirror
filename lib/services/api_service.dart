@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 class ApiService {
-  static const String baseUrl = "https://empreinte-verif-api.vercel.app/api";
+
+  // 🔵 Source unique de vérité pour l'URL API
+  static String get baseUrl => AppConfig.apiBaseUrl;
 
   // 🔵 Activation employé
   static Future<dynamic> activateEmployee(String employeeCode) async {
@@ -14,7 +17,6 @@ class ApiService {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"employee_code": employeeCode}),
       );
-
       return jsonDecode(response.body);
     } catch (e) {
       return {"success": false, "message": "Erreur : $e"};
@@ -31,7 +33,6 @@ class ApiService {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"token": token}),
       );
-
       return jsonDecode(response.body);
     } catch (e) {
       return {"success": false, "message": "Erreur : $e"};
